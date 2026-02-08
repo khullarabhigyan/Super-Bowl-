@@ -437,6 +437,70 @@
     margin-bottom: 8px;
   }
 
+  /* Status toast */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95em;
+    z-index: 200;
+    transition: transform 0.4s ease;
+    max-width: 90vw;
+    text-align: center;
+  }
+
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .toast.success {
+    background: var(--seahawks-green);
+    color: white;
+  }
+
+  .toast.error {
+    background: var(--patriots-red);
+    color: white;
+  }
+
+  .toast.info {
+    background: var(--accent);
+    color: var(--bg-dark);
+  }
+
+  /* Spinner */
+  .spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .submit-btn .spinner {
+    border: 3px solid rgba(26,26,46,0.3);
+    border-top-color: #1a1a2e;
+  }
+
+  /* Loading overlay for submissions */
+  .loading-msg {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 20px;
+  }
+
   /* Submissions viewer */
   .view-btn {
     background: transparent;
@@ -647,6 +711,12 @@
 </div>
 
 <script>
+// =====================================================
+// GOOGLE SHEETS CONFIG
+// Replace with your deployed Apps Script Web App URL
+// =====================================================
+const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
+
 const questions = [
   {
     id: 1,
@@ -815,79 +885,105 @@ const questions = [
   }
 ];
 
-const answers = {};
-const STORAGE_KEY = 'superbowl_lx_submissions';
+const selectedAnswers = {};
 
-// Category emojis for fun
 const questionEmojis = [
-  "🏆", "🏈", "🎯", "🎵", "📺",
-  "🪙", "🎤", "🌟", "🥤", "🏈",
-  "🚩", "🎶", "👑", "📊", "🎵"
+  "\u{1F3C6}", "\u{1F3C8}", "\u{1F3AF}", "\u{1F3B5}", "\u{1F4FA}",
+  "\u{1FA99}", "\u{1F3A4}", "\u{1F31F}", "\u{1F964}", "\u{1F3C8}",
+  "\u{1F6A9}", "\u{1F3B6}", "\u{1F451}", "\u{1F4CA}", "\u{1F3B5}"
 ];
 
+// Question labels for the submissions viewer
+const questionLabels = [
+  "Winner", "First TD Team", "First TD Scorer", "Opening Song",
+  "First Commercial", "Coin Toss", "Anthem Length", "Guest Performer",
+  "Gatorade Color", "Total FGs", "First Penalty", "Songs Performed",
+  "MVP", "Winning Margin", "DtMF Performed"
+];
+
+function isConfigured() {
+  return GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL !== 'YOUR_GOOGLE_SCRIPT_URL_HERE';
+}
+
+// ---- Toast notifications ----
+function showToast(message, type, duration) {
+  type = type || 'info';
+  duration = duration || 3500;
+  var existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+
+  var toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      toast.classList.add('show');
+    });
+  });
+
+  setTimeout(function() {
+    toast.classList.remove('show');
+    setTimeout(function() { toast.remove(); }, 400);
+  }, duration);
+}
+
+// ---- Build questions ----
 function buildQuestions() {
-  const container = document.getElementById('questionsContainer');
-  questions.forEach((q, idx) => {
-    const card = document.createElement('div');
+  var container = document.getElementById('questionsContainer');
+  questions.forEach(function(q, idx) {
+    var card = document.createElement('div');
     card.className = 'question-card';
-    card.id = `card-${q.id}`;
+    card.id = 'card-' + q.id;
 
-    let optionsHtml = q.options.map((opt, optIdx) => `
-      <div class="option" onclick="selectOption(${q.id}, ${optIdx}, this)" data-q="${q.id}" data-o="${optIdx}">
-        <div class="option-radio"></div>
-        <div class="option-label">${opt}</div>
-      </div>
-    `).join('');
+    var optionsHtml = q.options.map(function(opt, optIdx) {
+      return '<div class="option" onclick="selectOption(' + q.id + ', ' + optIdx + ', this)" data-q="' + q.id + '" data-o="' + optIdx + '">' +
+        '<div class="option-radio"></div>' +
+        '<div class="option-label">' + opt + '</div>' +
+      '</div>';
+    }).join('');
 
-    card.innerHTML = `
-      <div class="question-header">
-        <div class="question-number">${questionEmojis[idx]} ${q.id}</div>
-        <div class="question-text">${q.text}</div>
-      </div>
-      <div class="options">
-        ${optionsHtml}
-      </div>
-    `;
+    card.innerHTML =
+      '<div class="question-header">' +
+        '<div class="question-number">' + questionEmojis[idx] + ' ' + q.id + '</div>' +
+        '<div class="question-text">' + q.text + '</div>' +
+      '</div>' +
+      '<div class="options">' + optionsHtml + '</div>';
 
     container.appendChild(card);
   });
 }
 
 function selectOption(questionId, optionIdx, el) {
-  // Deselect all options for this question
-  const card = document.getElementById(`card-${questionId}`);
-  card.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-
-  // Select clicked
+  var card = document.getElementById('card-' + questionId);
+  card.querySelectorAll('.option').forEach(function(o) { o.classList.remove('selected'); });
   el.classList.add('selected');
-  answers[questionId] = optionIdx;
-
-  // Mark card as answered
+  selectedAnswers[questionId] = optionIdx;
   card.classList.add('answered');
-
   updateProgress();
 }
 
 function updateProgress() {
-  const answered = Object.keys(answers).length;
-  const pct = (answered / questions.length) * 100;
+  var answered = Object.keys(selectedAnswers).length;
+  var pct = (answered / questions.length) * 100;
   document.getElementById('progressBar').style.width = pct + '%';
-  document.getElementById('progressText').textContent = `${answered} of ${questions.length} answered`;
+  document.getElementById('progressText').textContent = answered + ' of ' + questions.length + ' answered';
 }
 
-function submitPredictions() {
-  const name = document.getElementById('playerName').value.trim();
+// ---- Submit predictions ----
+async function submitPredictions() {
+  var name = document.getElementById('playerName').value.trim();
   if (!name) {
     shakeElement(document.querySelector('.name-section'));
     document.getElementById('playerName').focus();
     return;
   }
 
-  if (Object.keys(answers).length < questions.length) {
-    // Find first unanswered
-    for (let i = 1; i <= questions.length; i++) {
-      if (answers[i] === undefined) {
-        const card = document.getElementById(`card-${i}`);
+  if (Object.keys(selectedAnswers).length < questions.length) {
+    for (var i = 1; i <= questions.length; i++) {
+      if (selectedAnswers[i] === undefined) {
+        var card = document.getElementById('card-' + i);
         card.scrollIntoView({ behavior: 'smooth', block: 'center' });
         shakeElement(card);
         return;
@@ -896,8 +992,8 @@ function submitPredictions() {
     return;
   }
 
-  // Build submission
-  const submission = {
+  // Build submission object
+  var submission = {
     name: name,
     timestamp: new Date().toISOString(),
     answers: {},
@@ -907,117 +1003,196 @@ function submitPredictions() {
     }
   };
 
-  questions.forEach(q => {
+  questions.forEach(function(q) {
     submission.answers[q.id] = {
       question: q.text,
-      answer: q.options[answers[q.id]]
+      answer: q.options[selectedAnswers[q.id]]
     };
   });
 
-  // Save to localStorage
-  const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  var btn = document.getElementById('submitBtn');
+
+  // Send to Google Sheets if configured
+  if (isConfigured()) {
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Submitting...';
+
+    try {
+      var response = await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(submission)
+      });
+
+      // no-cors means we get an opaque response, so we assume success
+      showToast('Saved to the shared leaderboard!', 'success');
+    } catch (err) {
+      console.error('Google Sheets error:', err);
+      showToast('Saved locally (sheet sync failed - check your connection)', 'error', 5000);
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = 'SUBMIT PREDICTIONS';
+  }
+
+  // Always save to localStorage as backup
+  var existing = JSON.parse(localStorage.getItem('superbowl_lx_submissions') || '[]');
   existing.push(submission);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
+  localStorage.setItem('superbowl_lx_submissions', JSON.stringify(existing));
 
   // Show confirmation
   document.getElementById('formSection').style.display = 'none';
   document.getElementById('confirmationSection').classList.add('show');
-  document.getElementById('confirmName').textContent = `${name}'s predictions have been saved!`;
+  document.getElementById('confirmName').textContent = name + "'s predictions have been saved!";
 
-  // Confetti!
   launchConfetti();
-
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// ---- Shake animation ----
 function shakeElement(el) {
   el.style.animation = 'none';
-  el.offsetHeight; // trigger reflow
+  el.offsetHeight;
   el.style.animation = 'shake 0.5s ease';
-  setTimeout(() => { el.style.animation = ''; }, 500);
+  setTimeout(function() { el.style.animation = ''; }, 500);
 }
 
-// Add shake keyframes dynamically
-const shakeStyle = document.createElement('style');
-shakeStyle.textContent = `
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    20% { transform: translateX(-8px); }
-    40% { transform: translateX(8px); }
-    60% { transform: translateX(-5px); }
-    80% { transform: translateX(5px); }
-  }
-`;
+var shakeStyle = document.createElement('style');
+shakeStyle.textContent =
+  '@keyframes shake {' +
+    '0%, 100% { transform: translateX(0); }' +
+    '20% { transform: translateX(-8px); }' +
+    '40% { transform: translateX(8px); }' +
+    '60% { transform: translateX(-5px); }' +
+    '80% { transform: translateX(5px); }' +
+  '}';
 document.head.appendChild(shakeStyle);
 
+// ---- Confetti ----
 function launchConfetti() {
-  const colors = ['#FFD700', '#69BE28', '#C60C30', '#4fc3f7', '#ff6f61', '#ab47bc'];
-  for (let i = 0; i < 80; i++) {
-    setTimeout(() => {
-      const piece = document.createElement('div');
-      piece.className = 'confetti-piece';
-      piece.style.left = Math.random() * 100 + 'vw';
-      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-      piece.style.width = (Math.random() * 8 + 5) + 'px';
-      piece.style.height = (Math.random() * 8 + 5) + 'px';
-      piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-      piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
-      document.body.appendChild(piece);
-      setTimeout(() => piece.remove(), 4000);
-    }, i * 30);
+  var colors = ['#FFD700', '#69BE28', '#C60C30', '#4fc3f7', '#ff6f61', '#ab47bc'];
+  for (var i = 0; i < 80; i++) {
+    (function(i) {
+      setTimeout(function() {
+        var piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + 'vw';
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.width = (Math.random() * 8 + 5) + 'px';
+        piece.style.height = (Math.random() * 8 + 5) + 'px';
+        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        document.body.appendChild(piece);
+        setTimeout(function() { piece.remove(); }, 4000);
+      }, i * 30);
+    })(i);
   }
 }
 
-function toggleSubmissions() {
-  const panel = document.getElementById('submissionsPanel');
+// ---- Submissions viewer ----
+async function toggleSubmissions() {
+  var panel = document.getElementById('submissionsPanel');
   panel.classList.toggle('show');
   if (panel.classList.contains('show')) {
-    renderSubmissions();
+    await renderSubmissions();
   }
 }
 
-function renderSubmissions() {
-  const list = document.getElementById('submissionsList');
-  const submissions = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+async function renderSubmissions() {
+  var list = document.getElementById('submissionsList');
+
+  // Try Google Sheets first
+  if (isConfigured()) {
+    list.innerHTML = '<div class="loading-msg"><span class="spinner"></span> Loading submissions from shared leaderboard...</div>';
+
+    try {
+      var response = await fetch(GOOGLE_SCRIPT_URL);
+      var data = await response.json();
+
+      if (data.status === 'success' && data.submissions && data.submissions.length > 0) {
+        renderSheetSubmissions(list, data.submissions);
+        return;
+      }
+    } catch (err) {
+      console.error('Failed to fetch from Google Sheets:', err);
+      showToast('Could not load shared data, showing local entries', 'error', 3000);
+    }
+  }
+
+  // Fallback to localStorage
+  renderLocalSubmissions(list);
+}
+
+function renderSheetSubmissions(list, submissions) {
+  if (submissions.length === 0) {
+    list.innerHTML = '<p style="text-align:center;color:var(--text-secondary);">No submissions yet.</p>';
+    return;
+  }
+
+  list.innerHTML = '<p style="text-align:center;color:var(--accent);margin-bottom:16px;font-weight:600;">' +
+    submissions.length + ' prediction' + (submissions.length !== 1 ? 's' : '') + ' submitted</p>' +
+    submissions.map(function(sub) {
+      var answersHtml = '';
+      for (var i = 1; i <= 15; i++) {
+        var key = 'Q' + i + ': ' + questionLabels[i - 1];
+        var val = sub[key] || '';
+        if (val) {
+          answersHtml += '<div class="entry-answer"><strong>Q' + i + ':</strong> ' + escapeHtml(String(val)) + '</div>';
+        }
+      }
+
+      var seaScore = sub['Tiebreaker: Seahawks Score'] || '0';
+      var neScore = sub['Tiebreaker: Patriots Score'] || '0';
+      answersHtml += '<div class="entry-answer"><strong>Tie-breaker:</strong> Seahawks ' +
+        escapeHtml(String(seaScore)) + ' - Patriots ' + escapeHtml(String(neScore)) + '</div>';
+
+      return '<div class="submission-entry">' +
+        '<div class="entry-name">\u{1F3C8} ' + escapeHtml(String(sub['Name'] || 'Anonymous')) +
+        ' <span style="font-size:0.75em;color:var(--text-secondary);font-weight:400;">' +
+        escapeHtml(String(sub['Timestamp'] || '')) + '</span></div>' +
+        '<div class="entry-answers">' + answersHtml + '</div></div>';
+    }).join('');
+}
+
+function renderLocalSubmissions(list) {
+  var submissions = JSON.parse(localStorage.getItem('superbowl_lx_submissions') || '[]');
 
   if (submissions.length === 0) {
     list.innerHTML = '<p style="text-align:center;color:var(--text-secondary);">No submissions yet.</p>';
     return;
   }
 
-  list.innerHTML = submissions.map((sub, idx) => {
-    const answersHtml = Object.keys(sub.answers).map(qId => {
-      return `<div class="entry-answer"><strong>Q${qId}:</strong> ${sub.answers[qId].answer}</div>`;
+  list.innerHTML = submissions.map(function(sub) {
+    var answersHtml = Object.keys(sub.answers).map(function(qId) {
+      return '<div class="entry-answer"><strong>Q' + qId + ':</strong> ' + escapeHtml(sub.answers[qId].answer) + '</div>';
     }).join('');
 
-    const time = new Date(sub.timestamp).toLocaleString();
+    var time = new Date(sub.timestamp).toLocaleString();
 
-    return `
-      <div class="submission-entry">
-        <div class="entry-name">🏈 ${escapeHtml(sub.name)} <span style="font-size:0.75em;color:var(--text-secondary);font-weight:400;">${time}</span></div>
-        <div class="entry-answers">
-          ${answersHtml}
-          <div class="entry-answer"><strong>Tie-breaker:</strong> Seahawks ${sub.tiebreaker.seahawks} - Patriots ${sub.tiebreaker.patriots}</div>
-        </div>
-      </div>
-    `;
+    return '<div class="submission-entry">' +
+      '<div class="entry-name">\u{1F3C8} ' + escapeHtml(sub.name) +
+      ' <span style="font-size:0.75em;color:var(--text-secondary);font-weight:400;">' + time + '</span></div>' +
+      '<div class="entry-answers">' + answersHtml +
+      '<div class="entry-answer"><strong>Tie-breaker:</strong> Seahawks ' +
+      sub.tiebreaker.seahawks + ' - Patriots ' + sub.tiebreaker.patriots + '</div>' +
+      '</div></div>';
   }).join('');
 }
 
 function escapeHtml(str) {
-  const div = document.createElement('div');
+  var div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
 }
 
 function newEntry() {
-  // Reset form
-  Object.keys(answers).forEach(k => delete answers[k]);
+  Object.keys(selectedAnswers).forEach(function(k) { delete selectedAnswers[k]; });
   document.getElementById('playerName').value = '';
   document.getElementById('seaScore').value = '';
   document.getElementById('neScore').value = '';
-  document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-  document.querySelectorAll('.question-card').forEach(c => c.classList.remove('answered'));
+  document.querySelectorAll('.option').forEach(function(o) { o.classList.remove('selected'); });
+  document.querySelectorAll('.question-card').forEach(function(c) { c.classList.remove('answered'); });
   updateProgress();
 
   document.getElementById('confirmationSection').classList.remove('show');
@@ -1026,11 +1201,11 @@ function newEntry() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Generate stars background
+// ---- Stars background ----
 function generateStars() {
-  const container = document.getElementById('stars');
-  for (let i = 0; i < 100; i++) {
-    const star = document.createElement('div');
+  var container = document.getElementById('stars');
+  for (var i = 0; i < 100; i++) {
+    var star = document.createElement('div');
     star.className = 'star';
     star.style.left = Math.random() * 100 + '%';
     star.style.top = Math.random() * 100 + '%';
@@ -1040,9 +1215,21 @@ function generateStars() {
   }
 }
 
-// Init
+// ---- Show setup banner if not configured ----
+function checkConfig() {
+  if (!isConfigured()) {
+    var banner = document.createElement('div');
+    banner.style.cssText = 'background:#f9a825;color:#1a1a2e;text-align:center;padding:10px 16px;font-size:0.85em;font-weight:600;position:fixed;top:0;left:0;right:0;z-index:999;';
+    banner.textContent = 'Google Sheets not connected yet. Submissions will be saved locally only. See GOOGLE_APPS_SCRIPT.js for setup instructions.';
+    document.body.appendChild(banner);
+    document.querySelector('.container').style.paddingTop = '50px';
+  }
+}
+
+// ---- Init ----
 generateStars();
 buildQuestions();
+checkConfig();
 </script>
 
 </body>
