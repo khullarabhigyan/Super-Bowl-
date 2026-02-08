@@ -41,10 +41,7 @@
     padding: 40px 0 32px;
   }
 
-  .logo {
-    font-size: 48px;
-    margin-bottom: 16px;
-  }
+  .logo { font-size: 48px; margin-bottom: 16px; }
 
   h1 {
     font-size: 2em;
@@ -69,9 +66,7 @@
     margin-top: 12px;
   }
 
-  .matchup strong {
-    color: var(--navy);
-  }
+  .matchup strong { color: var(--navy); }
 
   .date-badge {
     display: inline-block;
@@ -83,6 +78,18 @@
     font-weight: 600;
     margin-top: 12px;
     letter-spacing: 0.3px;
+  }
+
+  /* Admin banner */
+  .admin-banner {
+    background: var(--navy);
+    color: white;
+    text-align: center;
+    padding: 10px 16px;
+    font-size: 0.85em;
+    font-weight: 600;
+    border-radius: 8px;
+    margin-bottom: 16px;
   }
 
   /* Name input */
@@ -118,10 +125,7 @@
     transition: border-color 0.2s;
   }
 
-  .name-input:focus {
-    outline: none;
-    border-color: var(--green);
-  }
+  .name-input:focus { outline: none; border-color: var(--green); }
 
   /* Progress */
   .progress-section {
@@ -165,13 +169,17 @@
     transition: border-color 0.2s;
   }
 
-  .question-card:hover {
-    border-color: var(--border-hover);
-  }
+  .question-card:hover { border-color: var(--border-hover); }
 
   .question-card.answered {
     border-color: var(--green);
     background: var(--green-bg);
+  }
+
+  .question-card.locked {
+    border-color: var(--navy);
+    background: #f0f4f8;
+    opacity: 0.85;
   }
 
   .question-header {
@@ -195,9 +203,8 @@
     flex-shrink: 0;
   }
 
-  .question-card.answered .question-number {
-    background: var(--green);
-  }
+  .question-card.answered .question-number { background: var(--green); }
+  .question-card.locked .question-number { background: var(--navy); }
 
   .question-text {
     font-size: 0.95em;
@@ -205,6 +212,20 @@
     line-height: 1.4;
     padding-top: 3px;
     color: var(--navy);
+  }
+
+  .locked-badge {
+    display: inline-block;
+    background: var(--navy);
+    color: white;
+    font-size: 0.65em;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 8px;
+    vertical-align: middle;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
   }
 
   .options {
@@ -237,6 +258,23 @@
     color: white;
   }
 
+  .option.correct-answer {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: white;
+    cursor: default;
+  }
+
+  .option.locked-option {
+    cursor: default;
+    opacity: 0.5;
+  }
+
+  .option.locked-option:hover {
+    border-color: var(--border);
+    background: var(--bg);
+  }
+
   .option-radio {
     width: 18px;
     height: 18px;
@@ -262,9 +300,54 @@
     border-radius: 50%;
   }
 
+  .option.correct-answer .option-radio {
+    border-color: white;
+    background: white;
+  }
+
+  .option.correct-answer .option-radio::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: var(--navy);
+    border-radius: 50%;
+  }
+
   .option-label {
     font-size: 0.9em;
     line-height: 1.3;
+    flex: 1;
+  }
+
+  /* Admin set-answer button */
+  .admin-set-btn {
+    background: none;
+    border: 1.5px solid var(--navy);
+    color: var(--navy);
+    font-size: 0.7em;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+
+  .admin-set-btn:hover {
+    background: var(--navy);
+    color: white;
+  }
+
+  .option.correct-answer .admin-set-btn {
+    border-color: white;
+    color: white;
+  }
+
+  .option.correct-answer .admin-set-btn:hover {
+    background: white;
+    color: var(--navy);
   }
 
   /* Tiebreaker */
@@ -327,10 +410,7 @@
     transition: border-color 0.2s;
   }
 
-  .score-input:focus {
-    outline: none;
-    border-color: var(--green);
-  }
+  .score-input:focus { outline: none; border-color: var(--green); }
 
   .score-dash {
     font-size: 1.5em;
@@ -347,10 +427,7 @@
   }
 
   /* Submit */
-  .submit-section {
-    text-align: center;
-    margin: 28px 0;
-  }
+  .submit-section { text-align: center; margin: 28px 0; }
 
   .submit-btn {
     background: var(--green);
@@ -366,20 +443,9 @@
     text-transform: uppercase;
   }
 
-  .submit-btn:hover {
-    background: var(--green-light);
-    transform: translateY(-1px);
-  }
-
-  .submit-btn:active {
-    transform: translateY(0);
-  }
-
-  .submit-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-  }
+  .submit-btn:hover { background: var(--green-light); transform: translateY(-1px); }
+  .submit-btn:active { transform: translateY(0); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
   /* Spinner */
   .spinner {
@@ -417,12 +483,7 @@
   .toast.error { background: #e53935; color: white; }
 
   /* Confirmation */
-  .confirmation {
-    display: none;
-    text-align: center;
-    padding: 60px 20px;
-  }
-
+  .confirmation { display: none; text-align: center; padding: 60px 20px; }
   .confirmation.show { display: block; }
 
   .confirmation .check-icon {
@@ -437,17 +498,8 @@
     100% { transform: scale(1); opacity: 1; }
   }
 
-  .confirmation h2 {
-    font-size: 1.6em;
-    color: var(--navy);
-    margin-bottom: 8px;
-  }
-
-  .confirmation p {
-    color: var(--text-secondary);
-    font-size: 1em;
-    margin-bottom: 6px;
-  }
+  .confirmation h2 { font-size: 1.6em; color: var(--navy); margin-bottom: 8px; }
+  .confirmation p { color: var(--text-secondary); font-size: 1em; margin-bottom: 6px; }
 
   .new-entry-btn {
     background: var(--navy);
@@ -511,6 +563,10 @@
     <div class="date-badge">February 8, 2026</div>
   </header>
 
+  <div id="adminBanner" class="admin-banner" style="display:none;">
+    ADMIN MODE &mdash; Click "SET" on the correct answer to lock a question
+  </div>
+
   <div id="formSection">
     <div class="name-section">
       <label for="playerName">Your Name</label>
@@ -563,6 +619,9 @@
 <script>
 var GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyNblI868fpESyKyP0TIoFHSnzu6qu_DgORoqEioH3RYRc8vCK4X4TF4vasV1yUeH5Ihg/exec';
 
+var IS_ADMIN = new URLSearchParams(window.location.search).has('admin');
+var answerKey = {}; // { questionId: { answerIndex, answerText } }
+
 var questions = [
   { id: 1, text: "Who will win Super Bowl LX?", options: ["Seattle Seahawks","New England Patriots","Seahawks by 10+ points","Patriots by 10+ points","Other (overtime/tie scenario)"] },
   { id: 2, text: "Which team scores first touchdown?", options: ["Seattle Seahawks","New England Patriots","Seahawks with defensive/special teams TD","Patriots with defensive/special teams TD","Other (first score is FG)"] },
@@ -583,6 +642,59 @@ var questions = [
 
 var selectedAnswers = {};
 
+// ---- Fetch answer key on load ----
+async function fetchAnswerKey() {
+  if (!GOOGLE_SCRIPT_URL) return;
+  try {
+    var resp = await fetch(GOOGLE_SCRIPT_URL);
+    var data = await resp.json();
+    if (data.status === 'success' && data.answerKey) {
+      answerKey = data.answerKey;
+      applyLockedQuestions();
+    }
+  } catch (err) {
+    console.error('Failed to fetch answer key:', err);
+  }
+}
+
+// ---- Lock questions that have correct answers ----
+function applyLockedQuestions() {
+  Object.keys(answerKey).forEach(function(qId) {
+    var ak = answerKey[qId];
+    var idx = parseInt(ak.answerIndex);
+    var card = document.getElementById('card-' + qId);
+    if (!card) return;
+
+    card.classList.add('locked');
+    card.classList.remove('answered');
+
+    // Add locked badge to question text
+    var qText = card.querySelector('.question-text');
+    if (qText && !qText.querySelector('.locked-badge')) {
+      qText.innerHTML += '<span class="locked-badge">Locked</span>';
+    }
+
+    // Lock all options
+    var options = card.querySelectorAll('.option');
+    options.forEach(function(opt, optIdx) {
+      opt.classList.remove('selected');
+      opt.classList.add('locked-option');
+      opt.onclick = null;
+
+      if (optIdx === idx) {
+        opt.classList.remove('locked-option');
+        opt.classList.add('correct-answer');
+      }
+    });
+
+    // Auto-set the answer for submission
+    selectedAnswers[parseInt(qId)] = idx;
+  });
+
+  updateProgress();
+}
+
+// ---- Build questions ----
 function buildQuestions() {
   var container = document.getElementById('questionsContainer');
   questions.forEach(function(q) {
@@ -591,9 +703,14 @@ function buildQuestions() {
     card.id = 'card-' + q.id;
 
     var optionsHtml = q.options.map(function(opt, optIdx) {
+      var adminBtn = '';
+      if (IS_ADMIN) {
+        adminBtn = '<button class="admin-set-btn" onclick="event.stopPropagation();setCorrectAnswer(' + q.id + ',' + optIdx + ')">SET</button>';
+      }
       return '<div class="option" onclick="selectOption(' + q.id + ',' + optIdx + ',this)">' +
         '<div class="option-radio"></div>' +
-        '<div class="option-label">' + opt + '</div></div>';
+        '<div class="option-label">' + opt + '</div>' +
+        adminBtn + '</div>';
     }).join('');
 
     card.innerHTML =
@@ -607,6 +724,9 @@ function buildQuestions() {
 }
 
 function selectOption(qId, optIdx, el) {
+  // Don't allow selection on locked questions
+  if (answerKey[qId]) return;
+
   var card = document.getElementById('card-' + qId);
   card.querySelectorAll('.option').forEach(function(o) { o.classList.remove('selected'); });
   el.classList.add('selected');
@@ -621,6 +741,43 @@ function updateProgress() {
   document.getElementById('progressText').textContent = n + ' / ' + questions.length;
 }
 
+// ---- Admin: Set correct answer ----
+async function setCorrectAnswer(qId, optIdx) {
+  if (!IS_ADMIN) return;
+
+  var q = questions.find(function(x) { return x.id === qId; });
+  if (!q) return;
+
+  var ansText = q.options[optIdx];
+  if (!confirm('Lock Q' + qId + ' answer as:\n\n"' + ansText + '"\n\nThis will prevent new submissions for this question.')) {
+    return;
+  }
+
+  var payload = {
+    type: 'answer_key',
+    question: qId,
+    answerIndex: optIdx,
+    answerText: ansText
+  };
+
+  try {
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload)
+    });
+
+    // Apply locally immediately
+    answerKey[qId] = { answerIndex: optIdx, answerText: ansText };
+    applyLockedQuestions();
+    showToast('Q' + qId + ' locked!', 'success');
+  } catch (err) {
+    showToast('Failed to save answer', 'error');
+  }
+}
+
+// ---- Submit predictions ----
 async function submitPredictions() {
   var name = document.getElementById('playerName').value.trim();
   if (!name) {
@@ -629,7 +786,9 @@ async function submitPredictions() {
     return;
   }
 
-  if (Object.keys(selectedAnswers).length < questions.length) {
+  // Check all unlocked questions are answered
+  var totalNeeded = questions.length;
+  if (Object.keys(selectedAnswers).length < totalNeeded) {
     for (var i = 1; i <= questions.length; i++) {
       if (selectedAnswers[i] === undefined) {
         var card = document.getElementById('card-' + i);
@@ -730,26 +889,35 @@ function launchConfetti() {
   }
 }
 
-function escapeHtml(str) {
-  var d = document.createElement('div');
-  d.textContent = str;
-  return d.innerHTML;
-}
-
 function newEntry() {
-  Object.keys(selectedAnswers).forEach(function(k) { delete selectedAnswers[k]; });
+  // Reset only unlocked questions
+  Object.keys(selectedAnswers).forEach(function(k) {
+    if (!answerKey[k]) delete selectedAnswers[k];
+  });
   document.getElementById('playerName').value = '';
   document.getElementById('seaScore').value = '';
   document.getElementById('neScore').value = '';
-  document.querySelectorAll('.option').forEach(function(o) { o.classList.remove('selected'); });
-  document.querySelectorAll('.question-card').forEach(function(c) { c.classList.remove('answered'); });
+  document.querySelectorAll('.option').forEach(function(o) {
+    if (!o.classList.contains('correct-answer') && !o.classList.contains('locked-option')) {
+      o.classList.remove('selected');
+    }
+  });
+  document.querySelectorAll('.question-card').forEach(function(c) {
+    if (!c.classList.contains('locked')) c.classList.remove('answered');
+  });
   updateProgress();
   document.getElementById('confirmationSection').classList.remove('show');
   document.getElementById('formSection').style.display = 'block';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// ---- Init ----
+if (IS_ADMIN) {
+  document.getElementById('adminBanner').style.display = 'block';
+}
+
 buildQuestions();
+fetchAnswerKey();
 </script>
 
 </body>
