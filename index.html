@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Super Bowl LX Prediction Game</title>
+<style>
+  :root {
+    --seahawks-green: #69BE28;
+    --seahawks-blue: #002244;
+    --patriots-blue: #002244;
+    --patriots-red: #C60C30;
+    --gold: #FFD700;
+    --bg-dark: #0a0e1a;
+    --bg-card: #121830;
+    --bg-card-hover: #1a2240;
+    --text-primary: #f0f0f0;
+    --text-secondary: #a0aec0;
+    --accent: #4fc3f7;
+    --border: #2a3050;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .stars {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .star {
+    position: absolute;
+    width: 2px; height: 2px;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 3s infinite alternate;
+  }
+
+  @keyframes twinkle {
+    0% { opacity: 0.2; }
+    100% { opacity: 1; }
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px 16px 60px;
+  }
+
+  header {
+    text-align: center;
+    padding: 30px 0 20px;
+  }
+
+  .trophy {
+    font-size: 64px;
+    margin-bottom: 10px;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  h1 {
+    font-size: 2.4em;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--gold), #fff8dc, var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 1px;
+    line-height: 1.1;
+  }
+
+  .matchup {
+    font-size: 1.1em;
+    color: var(--text-secondary);
+    margin-top: 8px;
+  }
+
+  .matchup .team-sea {
+    color: var(--seahawks-green);
+    font-weight: 700;
+  }
+
+  .matchup .team-ne {
+    color: var(--patriots-red);
+    font-weight: 700;
+  }
+
+  .date-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--patriots-red), var(--seahawks-green));
+    color: white;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+    margin-top: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Name input section */
+  .name-section {
+    background: var(--bg-card);
+    border: 2px solid var(--gold);
+    border-radius: 16px;
+    padding: 24px;
+    margin: 24px 0;
+    text-align: center;
+  }
+
+  .name-section label {
+    display: block;
+    font-size: 1.15em;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--gold);
+  }
+
+  .name-input {
+    width: 100%;
+    max-width: 400px;
+    padding: 14px 18px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    font-size: 1.1em;
+    text-align: center;
+    transition: border-color 0.3s;
+  }
+
+  .name-input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+  }
+
+  /* Question cards */
+  .question-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 16px;
+    transition: transform 0.2s, border-color 0.3s;
+  }
+
+  .question-card:hover {
+    border-color: var(--accent);
+  }
+
+  .question-card.answered {
+    border-color: var(--seahawks-green);
+  }
+
+  .question-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .question-number {
+    background: linear-gradient(135deg, var(--accent), #0288d1);
+    color: white;
+    font-weight: 800;
+    min-width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 0.95em;
+    flex-shrink: 0;
+  }
+
+  .question-card.answered .question-number {
+    background: linear-gradient(135deg, var(--seahawks-green), #4caf50);
+  }
+
+  .question-text {
+    font-size: 1.05em;
+    font-weight: 600;
+    line-height: 1.4;
+    padding-top: 5px;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .option:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--accent);
+  }
+
+  .option.selected {
+    background: rgba(79, 195, 247, 0.12);
+    border-color: var(--accent);
+  }
+
+  .option-radio {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .option.selected .option-radio {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+
+  .option.selected .option-radio::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+  }
+
+  .option-label {
+    font-size: 0.95em;
+    line-height: 1.3;
+  }
+
+  /* Tiebreaker section */
+  .tiebreaker {
+    background: var(--bg-card);
+    border: 2px solid var(--gold);
+    border-radius: 16px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+
+  .tiebreaker h3 {
+    color: var(--gold);
+    font-size: 1.15em;
+    margin-bottom: 6px;
+  }
+
+  .tiebreaker p {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    margin-bottom: 16px;
+  }
+
+  .score-inputs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .score-team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .score-team label {
+    font-weight: 700;
+    font-size: 0.95em;
+  }
+
+  .score-team .sea-label { color: var(--seahawks-green); }
+  .score-team .ne-label { color: var(--patriots-red); }
+
+  .score-input {
+    width: 80px;
+    padding: 12px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    font-size: 1.5em;
+    font-weight: 700;
+    text-align: center;
+    transition: border-color 0.3s;
+  }
+
+  .score-input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+  }
+
+  .score-dash {
+    font-size: 2em;
+    font-weight: 700;
+    color: var(--text-secondary);
+  }
+
+  /* Progress bar */
+  .progress-section {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg-dark);
+    padding: 10px 0;
+    margin-bottom: 10px;
+  }
+
+  .progress-bar-bg {
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--seahawks-green), var(--accent));
+    border-radius: 4px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .progress-text {
+    text-align: center;
+    font-size: 0.8em;
+    color: var(--text-secondary);
+    margin-top: 6px;
+  }
+
+  /* Submit button */
+  .submit-section {
+    text-align: center;
+    margin: 30px 0;
+  }
+
+  .submit-btn {
+    background: linear-gradient(135deg, var(--gold), #f9a825);
+    color: #1a1a2e;
+    border: none;
+    padding: 16px 48px;
+    font-size: 1.2em;
+    font-weight: 800;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.3s;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.35);
+  }
+
+  .submit-btn:active {
+    transform: translateY(0px);
+  }
+
+  .submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Confirmation screen */
+  .confirmation {
+    display: none;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .confirmation.show {
+    display: block;
+  }
+
+  .confirmation .check-icon {
+    font-size: 72px;
+    margin-bottom: 20px;
+    animation: popIn 0.5s ease;
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    70% { transform: scale(1.2); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .confirmation h2 {
+    font-size: 1.8em;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+
+  .confirmation p {
+    color: var(--text-secondary);
+    font-size: 1.05em;
+    margin-bottom: 8px;
+  }
+
+  /* Submissions viewer */
+  .view-btn {
+    background: transparent;
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    padding: 10px 24px;
+    font-size: 0.95em;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 16px;
+  }
+
+  .view-btn:hover {
+    background: var(--accent);
+    color: var(--bg-dark);
+  }
+
+  .submissions-panel {
+    display: none;
+    margin-top: 30px;
+    text-align: left;
+  }
+
+  .submissions-panel.show {
+    display: block;
+  }
+
+  .submissions-panel h3 {
+    color: var(--gold);
+    font-size: 1.2em;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .submission-entry {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 12px;
+  }
+
+  .submission-entry .entry-name {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .submission-entry .entry-answers {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px;
+    font-size: 0.85em;
+    color: var(--text-secondary);
+  }
+
+  .submission-entry .entry-answer {
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .submission-entry .entry-answer strong {
+    color: var(--text-primary);
+  }
+
+  .new-entry-btn {
+    background: linear-gradient(135deg, var(--seahawks-green), #4caf50);
+    color: white;
+    border: none;
+    padding: 12px 32px;
+    font-size: 1em;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    margin-top: 10px;
+  }
+
+  .new-entry-btn:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Scoring note */
+  .scoring-note {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.85em;
+    margin-top: 8px;
+    font-style: italic;
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.8em;
+    padding: 20px 0;
+    border-top: 1px solid var(--border);
+    margin-top: 20px;
+  }
+
+  /* Confetti */
+  .confetti-piece {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    z-index: 100;
+    animation: confetti-fall linear forwards;
+    pointer-events: none;
+  }
+
+  @keyframes confetti-fall {
+    0% { top: -10px; opacity: 1; transform: rotateZ(0deg); }
+    100% { top: 110vh; opacity: 0; transform: rotateZ(720deg); }
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    h1 { font-size: 1.7em; }
+    .container { padding: 12px 10px 40px; }
+    .question-card { padding: 18px 14px; }
+    .option { padding: 10px 12px; }
+    .submit-btn { padding: 14px 32px; font-size: 1.05em; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="container">
+  <header>
+    <div class="trophy">🏈</div>
+    <h1>SUPER BOWL LX</h1>
+    <h1 style="font-size:1.3em;">PREDICTION GAME</h1>
+    <div class="matchup">
+      <span class="team-sea">Seattle Seahawks</span>
+      &nbsp;vs.&nbsp;
+      <span class="team-ne">New England Patriots</span>
+    </div>
+    <div class="date-badge">February 8, 2026 - Allegiant Stadium, Las Vegas</div>
+  </header>
+
+  <!-- FORM SECTION -->
+  <div id="formSection">
+    <div class="name-section">
+      <label for="playerName">Your Name</label>
+      <input type="text" id="playerName" class="name-input" placeholder="Enter your name..." maxlength="50" autocomplete="off">
+    </div>
+
+    <div class="progress-section">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressBar"></div>
+      </div>
+      <div class="progress-text" id="progressText">0 of 15 answered</div>
+    </div>
+
+    <div id="questionsContainer"></div>
+
+    <div class="tiebreaker">
+      <h3>Bonus Tie-Breaker</h3>
+      <p>Predict the final score:</p>
+      <div class="score-inputs">
+        <div class="score-team">
+          <label class="sea-label">Seahawks</label>
+          <input type="number" id="seaScore" class="score-input" min="0" max="99" placeholder="0">
+        </div>
+        <div class="score-dash">-</div>
+        <div class="score-team">
+          <label class="ne-label">Patriots</label>
+          <input type="number" id="neScore" class="score-input" min="0" max="99" placeholder="0">
+        </div>
+      </div>
+    </div>
+
+    <div class="scoring-note">Scoring: 1 point per correct answer. Most points wins!</div>
+
+    <div class="submit-section">
+      <button class="submit-btn" id="submitBtn" onclick="submitPredictions()">Submit Predictions</button>
+    </div>
+  </div>
+
+  <!-- CONFIRMATION SECTION -->
+  <div class="confirmation" id="confirmationSection">
+    <div class="check-icon">🎉</div>
+    <h2>Predictions Locked In!</h2>
+    <p id="confirmName"></p>
+    <p>Good luck! May the best predictor win!</p>
+    <button class="view-btn" onclick="toggleSubmissions()">View All Submissions</button>
+    <button class="new-entry-btn" onclick="newEntry()">Submit Another Entry</button>
+
+    <div class="submissions-panel" id="submissionsPanel">
+      <h3>All Submissions</h3>
+      <div id="submissionsList"></div>
+    </div>
+  </div>
+
+  <footer>
+    Super Bowl LX Prediction Game &bull; Just for fun!
+  </footer>
+</div>
+
+<script>
+const questions = [
+  {
+    id: 1,
+    text: "Who will win Super Bowl LX?",
+    options: [
+      "Seattle Seahawks",
+      "New England Patriots",
+      "Seahawks by 10+ points",
+      "Patriots by 10+ points",
+      "Other (overtime/tie scenario)"
+    ]
+  },
+  {
+    id: 2,
+    text: "Which team scores first touchdown?",
+    options: [
+      "Seattle Seahawks",
+      "New England Patriots",
+      "Seahawks with defensive/special teams TD",
+      "Patriots with defensive/special teams TD",
+      "Other (first score is FG)"
+    ]
+  },
+  {
+    id: 3,
+    text: "First touchdown scorer",
+    options: [
+      "Jaxon Smith-Njigba (Seahawks WR)",
+      "Hunter Henry (Patriots TE)",
+      "Kenneth Walker III (Seahawks RB)",
+      "Drake Maye (Patriots QB - rushing)",
+      "Other"
+    ]
+  },
+  {
+    id: 4,
+    text: "Opening song by Bad Bunny",
+    options: [
+      "BAILE INoLVIDABLE",
+      "Tit\u00ed Me Pregunt\u00f3",
+      "DtMF",
+      "MONACO",
+      "Other"
+    ]
+  },
+  {
+    id: 5,
+    text: "First commercial product shown after kickoff",
+    options: [
+      "Bud Light",
+      "Pringles / Sabrina Carpenter",
+      "TurboTax",
+      "Ring (home security)",
+      "Other"
+    ]
+  },
+  {
+    id: 6,
+    text: "Coin toss result",
+    options: [
+      "Heads",
+      "Tails",
+      "Seahawks win toss",
+      "Patriots win toss",
+      "Other (edge landing!)"
+    ]
+  },
+  {
+    id: 7,
+    text: "Charlie Puth national anthem length",
+    options: [
+      "Under 119.5 seconds",
+      "Over 119.5 seconds",
+      "Exactly 2 minutes (120 sec)",
+      "Under 2 minutes",
+      "Other"
+    ]
+  },
+  {
+    id: 8,
+    text: "Bad Bunny guest performer",
+    options: [
+      "Cardi B",
+      "J Balvin",
+      "Jennifer Lopez",
+      "No guest performers",
+      "Other"
+    ]
+  },
+  {
+    id: 9,
+    text: "Gatorade color dumped on winning coach",
+    options: [
+      "Yellow / Lime Green",
+      "Orange",
+      "Blue",
+      "Clear / Water",
+      "Other"
+    ]
+  },
+  {
+    id: 10,
+    text: "Total field goals made (both teams)",
+    options: [
+      "2 or fewer",
+      "3",
+      "4",
+      "5 or more",
+      "Other"
+    ]
+  },
+  {
+    id: 11,
+    text: "First penalty called",
+    options: [
+      "False start",
+      "Holding",
+      "Pass interference",
+      "Offsides",
+      "Other"
+    ]
+  },
+  {
+    id: 12,
+    text: "Bad Bunny total songs performed",
+    options: [
+      "9\u201310 songs",
+      "11\u201312 songs",
+      "13\u201314 songs",
+      "8 or fewer",
+      "Other"
+    ]
+  },
+  {
+    id: 13,
+    text: "Super Bowl MVP",
+    options: [
+      "Sam Darnold (Seahawks QB)",
+      "Jaxon Smith-Njigba (Seahawks WR)",
+      "Drake Maye (Patriots QB)",
+      "Defensive player",
+      "Other"
+    ]
+  },
+  {
+    id: 14,
+    text: "Final winning margin",
+    options: [
+      "1\u20136 points",
+      "7\u201313 points",
+      "14+ points",
+      "Exactly 3 points",
+      "Other"
+    ]
+  },
+  {
+    id: 15,
+    text: "Bad Bunny performs \u201cDtMF\u201d",
+    options: [
+      "Yes, opens with it",
+      "Yes, middle of show",
+      "Yes, closes with it",
+      "No, doesn\u2019t perform it",
+      "Other"
+    ]
+  }
+];
+
+const answers = {};
+const STORAGE_KEY = 'superbowl_lx_submissions';
+
+// Category emojis for fun
+const questionEmojis = [
+  "🏆", "🏈", "🎯", "🎵", "📺",
+  "🪙", "🎤", "🌟", "🥤", "🏈",
+  "🚩", "🎶", "👑", "📊", "🎵"
+];
+
+function buildQuestions() {
+  const container = document.getElementById('questionsContainer');
+  questions.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = `card-${q.id}`;
+
+    let optionsHtml = q.options.map((opt, optIdx) => `
+      <div class="option" onclick="selectOption(${q.id}, ${optIdx}, this)" data-q="${q.id}" data-o="${optIdx}">
+        <div class="option-radio"></div>
+        <div class="option-label">${opt}</div>
+      </div>
+    `).join('');
+
+    card.innerHTML = `
+      <div class="question-header">
+        <div class="question-number">${questionEmojis[idx]} ${q.id}</div>
+        <div class="question-text">${q.text}</div>
+      </div>
+      <div class="options">
+        ${optionsHtml}
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+function selectOption(questionId, optionIdx, el) {
+  // Deselect all options for this question
+  const card = document.getElementById(`card-${questionId}`);
+  card.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+
+  // Select clicked
+  el.classList.add('selected');
+  answers[questionId] = optionIdx;
+
+  // Mark card as answered
+  card.classList.add('answered');
+
+  updateProgress();
+}
+
+function updateProgress() {
+  const answered = Object.keys(answers).length;
+  const pct = (answered / questions.length) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `${answered} of ${questions.length} answered`;
+}
+
+function submitPredictions() {
+  const name = document.getElementById('playerName').value.trim();
+  if (!name) {
+    shakeElement(document.querySelector('.name-section'));
+    document.getElementById('playerName').focus();
+    return;
+  }
+
+  if (Object.keys(answers).length < questions.length) {
+    // Find first unanswered
+    for (let i = 1; i <= questions.length; i++) {
+      if (answers[i] === undefined) {
+        const card = document.getElementById(`card-${i}`);
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        shakeElement(card);
+        return;
+      }
+    }
+    return;
+  }
+
+  // Build submission
+  const submission = {
+    name: name,
+    timestamp: new Date().toISOString(),
+    answers: {},
+    tiebreaker: {
+      seahawks: parseInt(document.getElementById('seaScore').value) || 0,
+      patriots: parseInt(document.getElementById('neScore').value) || 0
+    }
+  };
+
+  questions.forEach(q => {
+    submission.answers[q.id] = {
+      question: q.text,
+      answer: q.options[answers[q.id]]
+    };
+  });
+
+  // Save to localStorage
+  const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  existing.push(submission);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
+
+  // Show confirmation
+  document.getElementById('formSection').style.display = 'none';
+  document.getElementById('confirmationSection').classList.add('show');
+  document.getElementById('confirmName').textContent = `${name}'s predictions have been saved!`;
+
+  // Confetti!
+  launchConfetti();
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function shakeElement(el) {
+  el.style.animation = 'none';
+  el.offsetHeight; // trigger reflow
+  el.style.animation = 'shake 0.5s ease';
+  setTimeout(() => { el.style.animation = ''; }, 500);
+}
+
+// Add shake keyframes dynamically
+const shakeStyle = document.createElement('style');
+shakeStyle.textContent = `
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+  }
+`;
+document.head.appendChild(shakeStyle);
+
+function launchConfetti() {
+  const colors = ['#FFD700', '#69BE28', '#C60C30', '#4fc3f7', '#ff6f61', '#ab47bc'];
+  for (let i = 0; i < 80; i++) {
+    setTimeout(() => {
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.left = Math.random() * 100 + 'vw';
+      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.width = (Math.random() * 8 + 5) + 'px';
+      piece.style.height = (Math.random() * 8 + 5) + 'px';
+      piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
+      document.body.appendChild(piece);
+      setTimeout(() => piece.remove(), 4000);
+    }, i * 30);
+  }
+}
+
+function toggleSubmissions() {
+  const panel = document.getElementById('submissionsPanel');
+  panel.classList.toggle('show');
+  if (panel.classList.contains('show')) {
+    renderSubmissions();
+  }
+}
+
+function renderSubmissions() {
+  const list = document.getElementById('submissionsList');
+  const submissions = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+  if (submissions.length === 0) {
+    list.innerHTML = '<p style="text-align:center;color:var(--text-secondary);">No submissions yet.</p>';
+    return;
+  }
+
+  list.innerHTML = submissions.map((sub, idx) => {
+    const answersHtml = Object.keys(sub.answers).map(qId => {
+      return `<div class="entry-answer"><strong>Q${qId}:</strong> ${sub.answers[qId].answer}</div>`;
+    }).join('');
+
+    const time = new Date(sub.timestamp).toLocaleString();
+
+    return `
+      <div class="submission-entry">
+        <div class="entry-name">🏈 ${escapeHtml(sub.name)} <span style="font-size:0.75em;color:var(--text-secondary);font-weight:400;">${time}</span></div>
+        <div class="entry-answers">
+          ${answersHtml}
+          <div class="entry-answer"><strong>Tie-breaker:</strong> Seahawks ${sub.tiebreaker.seahawks} - Patriots ${sub.tiebreaker.patriots}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function newEntry() {
+  // Reset form
+  Object.keys(answers).forEach(k => delete answers[k]);
+  document.getElementById('playerName').value = '';
+  document.getElementById('seaScore').value = '';
+  document.getElementById('neScore').value = '';
+  document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  document.querySelectorAll('.question-card').forEach(c => c.classList.remove('answered'));
+  updateProgress();
+
+  document.getElementById('confirmationSection').classList.remove('show');
+  document.getElementById('submissionsPanel').classList.remove('show');
+  document.getElementById('formSection').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Generate stars background
+function generateStars() {
+  const container = document.getElementById('stars');
+  for (let i = 0; i < 100; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.animationDelay = Math.random() * 3 + 's';
+    star.style.animationDuration = (Math.random() * 2 + 2) + 's';
+    container.appendChild(star);
+  }
+}
+
+// Init
+generateStars();
+buildQuestions();
+</script>
+
+</body>
+</html>
