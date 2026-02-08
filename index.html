@@ -6,613 +6,467 @@
 <title>Super Bowl LX Prediction Game</title>
 <style>
   :root {
-    --seahawks-green: #69BE28;
-    --seahawks-blue: #002244;
-    --patriots-blue: #002244;
-    --patriots-red: #C60C30;
-    --gold: #FFD700;
-    --bg-dark: #0a0e1a;
-    --bg-card: #121830;
-    --bg-card-hover: #1a2240;
-    --text-primary: #f0f0f0;
-    --text-secondary: #a0aec0;
-    --accent: #4fc3f7;
-    --border: #2a3050;
+    --navy: #002244;
+    --green: #69BE28;
+    --green-light: #7dd636;
+    --green-bg: #f0fae6;
+    --grey: #A5ACAF;
+    --bg: #fafbfc;
+    --bg-card: #ffffff;
+    --text: #1a1a2e;
+    --text-secondary: #5a6577;
+    --border: #e2e6ea;
+    --border-hover: #c5cdd5;
   }
 
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: var(--bg-dark);
-    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
     min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  .stars {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: 0;
-    overflow: hidden;
-  }
-
-  .star {
-    position: absolute;
-    width: 2px; height: 2px;
-    background: white;
-    border-radius: 50%;
-    animation: twinkle 3s infinite alternate;
-  }
-
-  @keyframes twinkle {
-    0% { opacity: 0.2; }
-    100% { opacity: 1; }
+    -webkit-font-smoothing: antialiased;
   }
 
   .container {
-    position: relative;
-    z-index: 1;
-    max-width: 800px;
+    max-width: 640px;
     margin: 0 auto;
-    padding: 20px 16px 60px;
+    padding: 24px 16px 60px;
   }
 
+  /* Header */
   header {
     text-align: center;
-    padding: 30px 0 20px;
+    padding: 40px 0 32px;
   }
 
-  .trophy {
-    font-size: 64px;
-    margin-bottom: 10px;
-    animation: float 3s ease-in-out infinite;
-  }
-
-  @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
+  .logo {
+    font-size: 48px;
+    margin-bottom: 16px;
   }
 
   h1 {
-    font-size: 2.4em;
+    font-size: 2em;
     font-weight: 800;
-    background: linear-gradient(135deg, var(--gold), #fff8dc, var(--gold));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: 1px;
+    color: var(--navy);
+    letter-spacing: -0.5px;
     line-height: 1.1;
   }
 
-  .matchup {
+  .subtitle {
     font-size: 1.1em;
+    font-weight: 700;
+    color: var(--green);
+    margin-top: 2px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .matchup {
+    font-size: 0.95em;
     color: var(--text-secondary);
-    margin-top: 8px;
+    margin-top: 12px;
   }
 
-  .matchup .team-sea {
-    color: var(--seahawks-green);
-    font-weight: 700;
-  }
-
-  .matchup .team-ne {
-    color: var(--patriots-red);
-    font-weight: 700;
+  .matchup strong {
+    color: var(--navy);
   }
 
   .date-badge {
     display: inline-block;
-    background: linear-gradient(135deg, var(--patriots-red), var(--seahawks-green));
+    background: var(--navy);
     color: white;
-    padding: 6px 18px;
-    border-radius: 20px;
-    font-size: 0.85em;
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 0.75em;
     font-weight: 600;
     margin-top: 12px;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
   }
 
-  /* Name input section */
+  /* Name input */
   .name-section {
     background: var(--bg-card);
-    border: 2px solid var(--gold);
-    border-radius: 16px;
-    padding: 24px;
-    margin: 24px 0;
+    border: 2px solid var(--green);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
     text-align: center;
   }
 
   .name-section label {
     display: block;
-    font-size: 1.15em;
+    font-size: 0.85em;
     font-weight: 700;
-    margin-bottom: 12px;
-    color: var(--gold);
+    margin-bottom: 8px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
   .name-input {
     width: 100%;
-    max-width: 400px;
-    padding: 14px 18px;
-    border: 2px solid var(--border);
-    border-radius: 10px;
-    background: var(--bg-dark);
-    color: var(--text-primary);
-    font-size: 1.1em;
+    max-width: 360px;
+    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 1em;
     text-align: center;
-    transition: border-color 0.3s;
+    transition: border-color 0.2s;
   }
 
   .name-input:focus {
     outline: none;
-    border-color: var(--gold);
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+    border-color: var(--green);
+  }
+
+  /* Progress */
+  .progress-section {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg);
+    padding: 12px 0 8px;
+  }
+
+  .progress-bar-bg {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .progress-text {
+    text-align: right;
+    font-size: 0.7em;
+    color: var(--grey);
+    margin-top: 4px;
+    font-weight: 600;
   }
 
   /* Question cards */
   .question-card {
     background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 16px;
-    transition: transform 0.2s, border-color 0.3s;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
   }
 
   .question-card:hover {
-    border-color: var(--accent);
+    border-color: var(--border-hover);
   }
 
   .question-card.answered {
-    border-color: var(--seahawks-green);
+    border-color: var(--green);
+    background: var(--green-bg);
   }
 
   .question-header {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 16px;
+    gap: 10px;
+    margin-bottom: 14px;
   }
 
   .question-number {
-    background: linear-gradient(135deg, var(--accent), #0288d1);
+    background: var(--navy);
     color: white;
     font-weight: 800;
-    min-width: 36px;
-    height: 36px;
+    min-width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
-    font-size: 0.95em;
+    border-radius: 8px;
+    font-size: 0.8em;
     flex-shrink: 0;
   }
 
   .question-card.answered .question-number {
-    background: linear-gradient(135deg, var(--seahawks-green), #4caf50);
+    background: var(--green);
   }
 
   .question-text {
-    font-size: 1.05em;
+    font-size: 0.95em;
     font-weight: 600;
     line-height: 1.4;
-    padding-top: 5px;
+    padding-top: 3px;
+    color: var(--navy);
   }
 
   .options {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin-top: 4px;
+    gap: 6px;
   }
 
   .option {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    border: 2px solid var(--border);
-    border-radius: 10px;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s;
     user-select: none;
+    background: var(--bg);
   }
 
   .option:hover {
-    background: var(--bg-card-hover);
-    border-color: var(--accent);
+    border-color: var(--green);
+    background: var(--green-bg);
   }
 
   .option.selected {
-    background: rgba(79, 195, 247, 0.12);
-    border-color: var(--accent);
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
   }
 
   .option-radio {
-    width: 22px;
-    height: 22px;
-    border: 2px solid var(--border);
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border-hover);
     border-radius: 50%;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
+    transition: all 0.15s;
   }
 
   .option.selected .option-radio {
-    border-color: var(--accent);
-    background: var(--accent);
+    border-color: white;
+    background: white;
   }
 
   .option.selected .option-radio::after {
     content: '';
     width: 8px;
     height: 8px;
-    background: white;
+    background: var(--green);
     border-radius: 50%;
   }
 
   .option-label {
-    font-size: 0.95em;
+    font-size: 0.9em;
     line-height: 1.3;
   }
 
-  /* Tiebreaker section */
+  /* Tiebreaker */
   .tiebreaker {
     background: var(--bg-card);
-    border: 2px solid var(--gold);
-    border-radius: 16px;
-    padding: 24px;
-    margin: 24px 0;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: center;
   }
 
   .tiebreaker h3 {
-    color: var(--gold);
-    font-size: 1.15em;
-    margin-bottom: 6px;
+    color: var(--navy);
+    font-size: 0.95em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
   }
 
   .tiebreaker p {
     color: var(--text-secondary);
-    font-size: 0.9em;
-    margin-bottom: 16px;
+    font-size: 0.85em;
+    margin-bottom: 14px;
   }
 
   .score-inputs {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 16px;
-    flex-wrap: wrap;
+    gap: 14px;
   }
 
   .score-team {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
   }
 
   .score-team label {
     font-weight: 700;
-    font-size: 0.95em;
+    font-size: 0.8em;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--navy);
   }
 
-  .score-team .sea-label { color: var(--seahawks-green); }
-  .score-team .ne-label { color: var(--patriots-red); }
-
   .score-input {
-    width: 80px;
-    padding: 12px;
-    border: 2px solid var(--border);
-    border-radius: 10px;
-    background: var(--bg-dark);
-    color: var(--text-primary);
-    font-size: 1.5em;
+    width: 72px;
+    padding: 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 1.4em;
     font-weight: 700;
     text-align: center;
-    transition: border-color 0.3s;
+    transition: border-color 0.2s;
   }
 
   .score-input:focus {
     outline: none;
-    border-color: var(--gold);
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+    border-color: var(--green);
   }
 
   .score-dash {
-    font-size: 2em;
-    font-weight: 700;
-    color: var(--text-secondary);
+    font-size: 1.5em;
+    font-weight: 300;
+    color: var(--grey);
+    padding-top: 22px;
   }
 
-  /* Progress bar */
-  .progress-section {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: var(--bg-dark);
-    padding: 10px 0;
-    margin-bottom: 10px;
-  }
-
-  .progress-bar-bg {
-    height: 8px;
-    background: var(--border);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-
-  .progress-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--seahawks-green), var(--accent));
-    border-radius: 4px;
-    transition: width 0.4s ease;
-    width: 0%;
-  }
-
-  .progress-text {
+  .scoring-note {
     text-align: center;
-    font-size: 0.8em;
     color: var(--text-secondary);
+    font-size: 0.8em;
     margin-top: 6px;
   }
 
-  /* Submit button */
+  /* Submit */
   .submit-section {
     text-align: center;
-    margin: 30px 0;
+    margin: 28px 0;
   }
 
   .submit-btn {
-    background: linear-gradient(135deg, var(--gold), #f9a825);
-    color: #1a1a2e;
+    background: var(--green);
+    color: white;
     border: none;
-    padding: 16px 48px;
-    font-size: 1.2em;
-    font-weight: 800;
-    border-radius: 14px;
+    padding: 14px 48px;
+    font-size: 1em;
+    font-weight: 700;
+    border-radius: 10px;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.3s;
-    letter-spacing: 0.5px;
+    transition: background 0.2s, transform 0.15s;
+    letter-spacing: 0.3px;
     text-transform: uppercase;
   }
 
   .submit-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.35);
+    background: var(--green-light);
+    transform: translateY(-1px);
   }
 
   .submit-btn:active {
-    transform: translateY(0px);
+    transform: translateY(0);
   }
 
   .submit-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none;
-    box-shadow: none;
-  }
-
-  /* Confirmation screen */
-  .confirmation {
-    display: none;
-    text-align: center;
-    padding: 40px 20px;
-  }
-
-  .confirmation.show {
-    display: block;
-  }
-
-  .confirmation .check-icon {
-    font-size: 72px;
-    margin-bottom: 20px;
-    animation: popIn 0.5s ease;
-  }
-
-  @keyframes popIn {
-    0% { transform: scale(0); opacity: 0; }
-    70% { transform: scale(1.2); }
-    100% { transform: scale(1); opacity: 1; }
-  }
-
-  .confirmation h2 {
-    font-size: 1.8em;
-    color: var(--gold);
-    margin-bottom: 10px;
-  }
-
-  .confirmation p {
-    color: var(--text-secondary);
-    font-size: 1.05em;
-    margin-bottom: 8px;
-  }
-
-  /* Status toast */
-  .toast {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    padding: 14px 28px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 0.95em;
-    z-index: 200;
-    transition: transform 0.4s ease;
-    max-width: 90vw;
-    text-align: center;
-  }
-
-  .toast.show {
-    transform: translateX(-50%) translateY(0);
-  }
-
-  .toast.success {
-    background: var(--seahawks-green);
-    color: white;
-  }
-
-  .toast.error {
-    background: var(--patriots-red);
-    color: white;
-  }
-
-  .toast.info {
-    background: var(--accent);
-    color: var(--bg-dark);
   }
 
   /* Spinner */
   .spinner {
     display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 3px solid rgba(255,255,255,0.3);
+    width: 18px;
+    height: 18px;
+    border: 2.5px solid rgba(255,255,255,0.3);
     border-top-color: white;
     border-radius: 50%;
-    animation: spin 0.7s linear infinite;
+    animation: spin 0.6s linear infinite;
     vertical-align: middle;
-    margin-right: 8px;
+    margin-right: 6px;
   }
 
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-  .submit-btn .spinner {
-    border: 3px solid rgba(26,26,46,0.3);
-    border-top-color: #1a1a2e;
-  }
-
-  /* Loading overlay for submissions */
-  .loading-msg {
-    text-align: center;
-    color: var(--text-secondary);
-    padding: 20px;
-  }
-
-  /* Submissions viewer */
-  .view-btn {
-    background: transparent;
-    border: 2px solid var(--accent);
-    color: var(--accent);
-    padding: 10px 24px;
-    font-size: 0.95em;
-    font-weight: 600;
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    padding: 12px 24px;
     border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 16px;
-  }
-
-  .view-btn:hover {
-    background: var(--accent);
-    color: var(--bg-dark);
-  }
-
-  .submissions-panel {
-    display: none;
-    margin-top: 30px;
-    text-align: left;
-  }
-
-  .submissions-panel.show {
-    display: block;
-  }
-
-  .submissions-panel h3 {
-    color: var(--gold);
-    font-size: 1.2em;
-    margin-bottom: 16px;
+    font-weight: 600;
+    font-size: 0.9em;
+    z-index: 200;
+    transition: transform 0.3s ease;
+    max-width: 90vw;
     text-align: center;
   }
 
-  .submission-entry {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 18px;
-    margin-bottom: 12px;
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { background: var(--green); color: white; }
+  .toast.error { background: #e53935; color: white; }
+
+  /* Confirmation */
+  .confirmation {
+    display: none;
+    text-align: center;
+    padding: 60px 20px;
   }
 
-  .submission-entry .entry-name {
-    color: var(--accent);
-    font-weight: 700;
-    font-size: 1.1em;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  .confirmation.show { display: block; }
+
+  .confirmation .check-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    animation: popIn 0.5s ease;
   }
 
-  .submission-entry .entry-answers {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 4px;
-    font-size: 0.85em;
+  @keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    70% { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .confirmation h2 {
+    font-size: 1.6em;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+
+  .confirmation p {
     color: var(--text-secondary);
-  }
-
-  .submission-entry .entry-answer {
-    padding: 3px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
-
-  .submission-entry .entry-answer strong {
-    color: var(--text-primary);
+    font-size: 1em;
+    margin-bottom: 6px;
   }
 
   .new-entry-btn {
-    background: linear-gradient(135deg, var(--seahawks-green), #4caf50);
+    background: var(--navy);
     color: white;
     border: none;
-    padding: 12px 32px;
-    font-size: 1em;
+    padding: 12px 28px;
+    font-size: 0.9em;
     font-weight: 700;
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: transform 0.2s;
-    margin-top: 10px;
-  }
-
-  .new-entry-btn:hover {
-    transform: translateY(-2px);
-  }
-
-  /* Scoring note */
-  .scoring-note {
-    text-align: center;
-    color: var(--text-secondary);
-    font-size: 0.85em;
-    margin-top: 8px;
-    font-style: italic;
-  }
-
-  /* Footer */
-  footer {
-    text-align: center;
-    color: var(--text-secondary);
-    font-size: 0.8em;
-    padding: 20px 0;
-    border-top: 1px solid var(--border);
+    transition: opacity 0.2s;
     margin-top: 20px;
   }
+
+  .new-entry-btn:hover { opacity: 0.85; }
 
   /* Confetti */
   .confetti-piece {
     position: fixed;
-    width: 10px;
-    height: 10px;
     top: -10px;
     z-index: 100;
     animation: confetti-fall linear forwards;
@@ -624,34 +478,39 @@
     100% { top: 110vh; opacity: 0; transform: rotateZ(720deg); }
   }
 
+  /* Footer */
+  footer {
+    text-align: center;
+    color: var(--grey);
+    font-size: 0.75em;
+    padding: 20px 0;
+    border-top: 1px solid var(--border);
+    margin-top: 20px;
+  }
+
   /* Responsive */
   @media (max-width: 480px) {
-    h1 { font-size: 1.7em; }
-    .container { padding: 12px 10px 40px; }
-    .question-card { padding: 18px 14px; }
-    .option { padding: 10px 12px; }
-    .submit-btn { padding: 14px 32px; font-size: 1.05em; }
+    h1 { font-size: 1.6em; }
+    .container { padding: 16px 12px 40px; }
+    .question-card { padding: 16px 14px; }
+    .option { padding: 9px 10px; }
+    .submit-btn { padding: 13px 32px; }
   }
 </style>
 </head>
 <body>
 
-<div class="stars" id="stars"></div>
-
 <div class="container">
   <header>
-    <div class="trophy">🏈</div>
+    <div class="logo">🏈</div>
     <h1>SUPER BOWL LX</h1>
-    <h1 style="font-size:1.3em;">PREDICTION GAME</h1>
+    <div class="subtitle">Prediction Game</div>
     <div class="matchup">
-      <span class="team-sea">Seattle Seahawks</span>
-      &nbsp;vs.&nbsp;
-      <span class="team-ne">New England Patriots</span>
+      <strong>Seattle Seahawks</strong> vs. <strong>New England Patriots</strong>
     </div>
-    <div class="date-badge">February 8, 2026 - Allegiant Stadium, Las Vegas</div>
+    <div class="date-badge">February 8, 2026</div>
   </header>
 
-  <!-- FORM SECTION -->
   <div id="formSection">
     <div class="name-section">
       <label for="playerName">Your Name</label>
@@ -662,316 +521,106 @@
       <div class="progress-bar-bg">
         <div class="progress-bar-fill" id="progressBar"></div>
       </div>
-      <div class="progress-text" id="progressText">0 of 15 answered</div>
+      <div class="progress-text" id="progressText">0 / 15</div>
     </div>
 
     <div id="questionsContainer"></div>
 
     <div class="tiebreaker">
       <h3>Bonus Tie-Breaker</h3>
-      <p>Predict the final score:</p>
+      <p>Predict the final score</p>
       <div class="score-inputs">
         <div class="score-team">
-          <label class="sea-label">Seahawks</label>
+          <label>Seahawks</label>
           <input type="number" id="seaScore" class="score-input" min="0" max="99" placeholder="0">
         </div>
-        <div class="score-dash">-</div>
+        <div class="score-dash">&ndash;</div>
         <div class="score-team">
-          <label class="ne-label">Patriots</label>
+          <label>Patriots</label>
           <input type="number" id="neScore" class="score-input" min="0" max="99" placeholder="0">
         </div>
       </div>
     </div>
 
-    <div class="scoring-note">Scoring: 1 point per correct answer. Most points wins!</div>
+    <div class="scoring-note">1 point per correct answer. Most points wins!</div>
 
     <div class="submit-section">
       <button class="submit-btn" id="submitBtn" onclick="submitPredictions()">Submit Predictions</button>
     </div>
   </div>
 
-  <!-- CONFIRMATION SECTION -->
   <div class="confirmation" id="confirmationSection">
     <div class="check-icon">🎉</div>
-    <h2>Predictions Locked In!</h2>
+    <h2>You're locked in!</h2>
     <p id="confirmName"></p>
-    <p>Good luck! May the best predictor win!</p>
-    <button class="view-btn" onclick="toggleSubmissions()">View All Submissions</button>
+    <p>Good luck &mdash; enjoy the game!</p>
     <button class="new-entry-btn" onclick="newEntry()">Submit Another Entry</button>
-
-    <div class="submissions-panel" id="submissionsPanel">
-      <h3>All Submissions</h3>
-      <div id="submissionsList"></div>
-    </div>
   </div>
 
-  <footer>
-    Super Bowl LX Prediction Game &bull; Just for fun!
-  </footer>
+  <footer>Super Bowl LX Prediction Game</footer>
 </div>
 
 <script>
-// =====================================================
-// GOOGLE SHEETS CONFIG
-// Replace with your deployed Apps Script Web App URL
-// =====================================================
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyNblI868fpESyKyP0TIoFHSnzu6qu_DgORoqEioH3RYRc8vCK4X4TF4vasV1yUeH5Ihg/exec';
+var GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyNblI868fpESyKyP0TIoFHSnzu6qu_DgORoqEioH3RYRc8vCK4X4TF4vasV1yUeH5Ihg/exec';
 
-const questions = [
-  {
-    id: 1,
-    text: "Who will win Super Bowl LX?",
-    options: [
-      "Seattle Seahawks",
-      "New England Patriots",
-      "Seahawks by 10+ points",
-      "Patriots by 10+ points",
-      "Other (overtime/tie scenario)"
-    ]
-  },
-  {
-    id: 2,
-    text: "Which team scores first touchdown?",
-    options: [
-      "Seattle Seahawks",
-      "New England Patriots",
-      "Seahawks with defensive/special teams TD",
-      "Patriots with defensive/special teams TD",
-      "Other (first score is FG)"
-    ]
-  },
-  {
-    id: 3,
-    text: "First touchdown scorer",
-    options: [
-      "Jaxon Smith-Njigba (Seahawks WR)",
-      "Hunter Henry (Patriots TE)",
-      "Kenneth Walker III (Seahawks RB)",
-      "Drake Maye (Patriots QB - rushing)",
-      "Other"
-    ]
-  },
-  {
-    id: 4,
-    text: "Opening song by Bad Bunny",
-    options: [
-      "BAILE INoLVIDABLE",
-      "Tit\u00ed Me Pregunt\u00f3",
-      "DtMF",
-      "MONACO",
-      "Other"
-    ]
-  },
-  {
-    id: 5,
-    text: "First commercial product shown after kickoff",
-    options: [
-      "Bud Light",
-      "Pringles / Sabrina Carpenter",
-      "TurboTax",
-      "Ring (home security)",
-      "Other"
-    ]
-  },
-  {
-    id: 6,
-    text: "Coin toss result",
-    options: [
-      "Heads",
-      "Tails",
-      "Seahawks win toss",
-      "Patriots win toss",
-      "Other (edge landing!)"
-    ]
-  },
-  {
-    id: 7,
-    text: "Charlie Puth national anthem length",
-    options: [
-      "Under 119.5 seconds",
-      "Over 119.5 seconds",
-      "Exactly 2 minutes (120 sec)",
-      "Under 2 minutes",
-      "Other"
-    ]
-  },
-  {
-    id: 8,
-    text: "Bad Bunny guest performer",
-    options: [
-      "Cardi B",
-      "J Balvin",
-      "Jennifer Lopez",
-      "No guest performers",
-      "Other"
-    ]
-  },
-  {
-    id: 9,
-    text: "Gatorade color dumped on winning coach",
-    options: [
-      "Yellow / Lime Green",
-      "Orange",
-      "Blue",
-      "Clear / Water",
-      "Other"
-    ]
-  },
-  {
-    id: 10,
-    text: "Total field goals made (both teams)",
-    options: [
-      "2 or fewer",
-      "3",
-      "4",
-      "5 or more",
-      "Other"
-    ]
-  },
-  {
-    id: 11,
-    text: "First penalty called",
-    options: [
-      "False start",
-      "Holding",
-      "Pass interference",
-      "Offsides",
-      "Other"
-    ]
-  },
-  {
-    id: 12,
-    text: "Bad Bunny total songs performed",
-    options: [
-      "9\u201310 songs",
-      "11\u201312 songs",
-      "13\u201314 songs",
-      "8 or fewer",
-      "Other"
-    ]
-  },
-  {
-    id: 13,
-    text: "Super Bowl MVP",
-    options: [
-      "Sam Darnold (Seahawks QB)",
-      "Jaxon Smith-Njigba (Seahawks WR)",
-      "Drake Maye (Patriots QB)",
-      "Defensive player",
-      "Other"
-    ]
-  },
-  {
-    id: 14,
-    text: "Final winning margin",
-    options: [
-      "1\u20136 points",
-      "7\u201313 points",
-      "14+ points",
-      "Exactly 3 points",
-      "Other"
-    ]
-  },
-  {
-    id: 15,
-    text: "Bad Bunny performs \u201cDtMF\u201d",
-    options: [
-      "Yes, opens with it",
-      "Yes, middle of show",
-      "Yes, closes with it",
-      "No, doesn\u2019t perform it",
-      "Other"
-    ]
-  }
+var questions = [
+  { id: 1, text: "Who will win Super Bowl LX?", options: ["Seattle Seahawks","New England Patriots","Seahawks by 10+ points","Patriots by 10+ points","Other (overtime/tie scenario)"] },
+  { id: 2, text: "Which team scores first touchdown?", options: ["Seattle Seahawks","New England Patriots","Seahawks with defensive/special teams TD","Patriots with defensive/special teams TD","Other (first score is FG)"] },
+  { id: 3, text: "First touchdown scorer", options: ["Jaxon Smith-Njigba (Seahawks WR)","Hunter Henry (Patriots TE)","Kenneth Walker III (Seahawks RB)","Drake Maye (Patriots QB \u2013 rushing)","Other"] },
+  { id: 4, text: "Opening song by Bad Bunny", options: ["BAILE INoLVIDABLE","Tit\u00ed Me Pregunt\u00f3","DtMF","MONACO","Other"] },
+  { id: 5, text: "First commercial product shown after kickoff", options: ["Bud Light","Pringles / Sabrina Carpenter","TurboTax","Ring (home security)","Other"] },
+  { id: 6, text: "Coin toss result", options: ["Heads","Tails","Seahawks win toss","Patriots win toss","Other (edge landing!)"] },
+  { id: 7, text: "Charlie Puth national anthem length", options: ["Under 119.5 seconds","Over 119.5 seconds","Exactly 2 minutes (120 sec)","Under 2 minutes","Other"] },
+  { id: 8, text: "Bad Bunny guest performer", options: ["Cardi B","J Balvin","Jennifer Lopez","No guest performers","Other"] },
+  { id: 9, text: "Gatorade color dumped on winning coach", options: ["Yellow / Lime Green","Orange","Blue","Clear / Water","Other"] },
+  { id: 10, text: "Total field goals made (both teams)", options: ["2 or fewer","3","4","5 or more","Other"] },
+  { id: 11, text: "First penalty called", options: ["False start","Holding","Pass interference","Offsides","Other"] },
+  { id: 12, text: "Bad Bunny total songs performed", options: ["9\u201310 songs","11\u201312 songs","13\u201314 songs","8 or fewer","Other"] },
+  { id: 13, text: "Super Bowl MVP", options: ["Sam Darnold (Seahawks QB)","Jaxon Smith-Njigba (Seahawks WR)","Drake Maye (Patriots QB)","Defensive player","Other"] },
+  { id: 14, text: "Final winning margin", options: ["1\u20136 points","7\u201313 points","14+ points","Exactly 3 points","Other"] },
+  { id: 15, text: "Bad Bunny performs \u201cDtMF\u201d", options: ["Yes, opens with it","Yes, middle of show","Yes, closes with it","No, doesn\u2019t perform it","Other"] }
 ];
 
-const selectedAnswers = {};
+var selectedAnswers = {};
 
-const questionEmojis = [
-  "\u{1F3C6}", "\u{1F3C8}", "\u{1F3AF}", "\u{1F3B5}", "\u{1F4FA}",
-  "\u{1FA99}", "\u{1F3A4}", "\u{1F31F}", "\u{1F964}", "\u{1F3C8}",
-  "\u{1F6A9}", "\u{1F3B6}", "\u{1F451}", "\u{1F4CA}", "\u{1F3B5}"
-];
-
-// Question labels for the submissions viewer
-const questionLabels = [
-  "Winner", "First TD Team", "First TD Scorer", "Opening Song",
-  "First Commercial", "Coin Toss", "Anthem Length", "Guest Performer",
-  "Gatorade Color", "Total FGs", "First Penalty", "Songs Performed",
-  "MVP", "Winning Margin", "DtMF Performed"
-];
-
-function isConfigured() {
-  return GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL !== 'YOUR_GOOGLE_SCRIPT_URL_HERE';
-}
-
-// ---- Toast notifications ----
-function showToast(message, type, duration) {
-  type = type || 'info';
-  duration = duration || 3500;
-  var existing = document.querySelector('.toast');
-  if (existing) existing.remove();
-
-  var toast = document.createElement('div');
-  toast.className = 'toast ' + type;
-  toast.textContent = message;
-  document.body.appendChild(toast);
-
-  requestAnimationFrame(function() {
-    requestAnimationFrame(function() {
-      toast.classList.add('show');
-    });
-  });
-
-  setTimeout(function() {
-    toast.classList.remove('show');
-    setTimeout(function() { toast.remove(); }, 400);
-  }, duration);
-}
-
-// ---- Build questions ----
 function buildQuestions() {
   var container = document.getElementById('questionsContainer');
-  questions.forEach(function(q, idx) {
+  questions.forEach(function(q) {
     var card = document.createElement('div');
     card.className = 'question-card';
     card.id = 'card-' + q.id;
 
     var optionsHtml = q.options.map(function(opt, optIdx) {
-      return '<div class="option" onclick="selectOption(' + q.id + ', ' + optIdx + ', this)" data-q="' + q.id + '" data-o="' + optIdx + '">' +
+      return '<div class="option" onclick="selectOption(' + q.id + ',' + optIdx + ',this)">' +
         '<div class="option-radio"></div>' +
-        '<div class="option-label">' + opt + '</div>' +
-      '</div>';
+        '<div class="option-label">' + opt + '</div></div>';
     }).join('');
 
     card.innerHTML =
       '<div class="question-header">' +
-        '<div class="question-number">' + questionEmojis[idx] + ' ' + q.id + '</div>' +
+        '<div class="question-number">' + q.id + '</div>' +
         '<div class="question-text">' + q.text + '</div>' +
-      '</div>' +
-      '<div class="options">' + optionsHtml + '</div>';
+      '</div><div class="options">' + optionsHtml + '</div>';
 
     container.appendChild(card);
   });
 }
 
-function selectOption(questionId, optionIdx, el) {
-  var card = document.getElementById('card-' + questionId);
+function selectOption(qId, optIdx, el) {
+  var card = document.getElementById('card-' + qId);
   card.querySelectorAll('.option').forEach(function(o) { o.classList.remove('selected'); });
   el.classList.add('selected');
-  selectedAnswers[questionId] = optionIdx;
+  selectedAnswers[qId] = optIdx;
   card.classList.add('answered');
   updateProgress();
 }
 
 function updateProgress() {
-  var answered = Object.keys(selectedAnswers).length;
-  var pct = (answered / questions.length) * 100;
-  document.getElementById('progressBar').style.width = pct + '%';
-  document.getElementById('progressText').textContent = answered + ' of ' + questions.length + ' answered';
+  var n = Object.keys(selectedAnswers).length;
+  document.getElementById('progressBar').style.width = (n / questions.length * 100) + '%';
+  document.getElementById('progressText').textContent = n + ' / ' + questions.length;
 }
 
-// ---- Submit predictions ----
 async function submitPredictions() {
   var name = document.getElementById('playerName').value.trim();
   if (!name) {
@@ -992,7 +641,6 @@ async function submitPredictions() {
     return;
   }
 
-  // Build submission object
   var submission = {
     name: name,
     timestamp: new Date().toISOString(),
@@ -1004,186 +652,88 @@ async function submitPredictions() {
   };
 
   questions.forEach(function(q) {
-    submission.answers[q.id] = {
-      question: q.text,
-      answer: q.options[selectedAnswers[q.id]]
-    };
+    submission.answers[q.id] = { question: q.text, answer: q.options[selectedAnswers[q.id]] };
   });
 
   var btn = document.getElementById('submitBtn');
 
-  // Send to Google Sheets if configured
-  if (isConfigured()) {
+  if (GOOGLE_SCRIPT_URL) {
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Submitting...';
-
     try {
-      var response = await fetch(GOOGLE_SCRIPT_URL, {
+      await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(submission)
       });
-
-      // no-cors means we get an opaque response, so we assume success
-      showToast('Saved to the shared leaderboard!', 'success');
+      showToast('Predictions saved!', 'success');
     } catch (err) {
-      console.error('Google Sheets error:', err);
-      showToast('Saved locally (sheet sync failed - check your connection)', 'error', 5000);
+      showToast('Saved locally (sync failed)', 'error', 4000);
     }
-
     btn.disabled = false;
     btn.innerHTML = 'SUBMIT PREDICTIONS';
   }
 
-  // Always save to localStorage as backup
   var existing = JSON.parse(localStorage.getItem('superbowl_lx_submissions') || '[]');
   existing.push(submission);
   localStorage.setItem('superbowl_lx_submissions', JSON.stringify(existing));
 
-  // Show confirmation
   document.getElementById('formSection').style.display = 'none';
   document.getElementById('confirmationSection').classList.add('show');
   document.getElementById('confirmName').textContent = name + "'s predictions have been saved!";
-
   launchConfetti();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ---- Shake animation ----
 function shakeElement(el) {
   el.style.animation = 'none';
   el.offsetHeight;
-  el.style.animation = 'shake 0.5s ease';
-  setTimeout(function() { el.style.animation = ''; }, 500);
+  el.style.animation = 'shake 0.4s ease';
+  setTimeout(function() { el.style.animation = ''; }, 400);
 }
 
-var shakeStyle = document.createElement('style');
-shakeStyle.textContent =
-  '@keyframes shake {' +
-    '0%, 100% { transform: translateX(0); }' +
-    '20% { transform: translateX(-8px); }' +
-    '40% { transform: translateX(8px); }' +
-    '60% { transform: translateX(-5px); }' +
-    '80% { transform: translateX(5px); }' +
-  '}';
-document.head.appendChild(shakeStyle);
+var s = document.createElement('style');
+s.textContent = '@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}';
+document.head.appendChild(s);
 
-// ---- Confetti ----
+function showToast(msg, type, dur) {
+  type = type || 'success';
+  dur = dur || 3000;
+  var old = document.querySelector('.toast');
+  if (old) old.remove();
+  var t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  requestAnimationFrame(function() { requestAnimationFrame(function() { t.classList.add('show'); }); });
+  setTimeout(function() { t.classList.remove('show'); setTimeout(function() { t.remove(); }, 300); }, dur);
+}
+
 function launchConfetti() {
-  var colors = ['#FFD700', '#69BE28', '#C60C30', '#4fc3f7', '#ff6f61', '#ab47bc'];
-  for (var i = 0; i < 80; i++) {
+  var colors = ['#69BE28','#002244','#A5ACAF','#7dd636','#ffffff'];
+  for (var i = 0; i < 60; i++) {
     (function(i) {
       setTimeout(function() {
-        var piece = document.createElement('div');
-        piece.className = 'confetti-piece';
-        piece.style.left = Math.random() * 100 + 'vw';
-        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-        piece.style.width = (Math.random() * 8 + 5) + 'px';
-        piece.style.height = (Math.random() * 8 + 5) + 'px';
-        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-        piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
-        document.body.appendChild(piece);
-        setTimeout(function() { piece.remove(); }, 4000);
-      }, i * 30);
+        var p = document.createElement('div');
+        p.className = 'confetti-piece';
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.background = colors[Math.floor(Math.random() * colors.length)];
+        p.style.width = (Math.random() * 6 + 4) + 'px';
+        p.style.height = (Math.random() * 6 + 4) + 'px';
+        p.style.borderRadius = Math.random() > 0.5 ? '50%' : '1px';
+        p.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        document.body.appendChild(p);
+        setTimeout(function() { p.remove(); }, 4000);
+      }, i * 25);
     })(i);
   }
 }
 
-// ---- Submissions viewer ----
-async function toggleSubmissions() {
-  var panel = document.getElementById('submissionsPanel');
-  panel.classList.toggle('show');
-  if (panel.classList.contains('show')) {
-    await renderSubmissions();
-  }
-}
-
-async function renderSubmissions() {
-  var list = document.getElementById('submissionsList');
-
-  // Try Google Sheets first
-  if (isConfigured()) {
-    list.innerHTML = '<div class="loading-msg"><span class="spinner"></span> Loading submissions from shared leaderboard...</div>';
-
-    try {
-      var response = await fetch(GOOGLE_SCRIPT_URL);
-      var data = await response.json();
-
-      if (data.status === 'success' && data.submissions && data.submissions.length > 0) {
-        renderSheetSubmissions(list, data.submissions);
-        return;
-      }
-    } catch (err) {
-      console.error('Failed to fetch from Google Sheets:', err);
-      showToast('Could not load shared data, showing local entries', 'error', 3000);
-    }
-  }
-
-  // Fallback to localStorage
-  renderLocalSubmissions(list);
-}
-
-function renderSheetSubmissions(list, submissions) {
-  if (submissions.length === 0) {
-    list.innerHTML = '<p style="text-align:center;color:var(--text-secondary);">No submissions yet.</p>';
-    return;
-  }
-
-  list.innerHTML = '<p style="text-align:center;color:var(--accent);margin-bottom:16px;font-weight:600;">' +
-    submissions.length + ' prediction' + (submissions.length !== 1 ? 's' : '') + ' submitted</p>' +
-    submissions.map(function(sub) {
-      var answersHtml = '';
-      for (var i = 1; i <= 15; i++) {
-        var key = 'Q' + i + ': ' + questionLabels[i - 1];
-        var val = sub[key] || '';
-        if (val) {
-          answersHtml += '<div class="entry-answer"><strong>Q' + i + ':</strong> ' + escapeHtml(String(val)) + '</div>';
-        }
-      }
-
-      var seaScore = sub['Tiebreaker: Seahawks Score'] || '0';
-      var neScore = sub['Tiebreaker: Patriots Score'] || '0';
-      answersHtml += '<div class="entry-answer"><strong>Tie-breaker:</strong> Seahawks ' +
-        escapeHtml(String(seaScore)) + ' - Patriots ' + escapeHtml(String(neScore)) + '</div>';
-
-      return '<div class="submission-entry">' +
-        '<div class="entry-name">\u{1F3C8} ' + escapeHtml(String(sub['Name'] || 'Anonymous')) +
-        ' <span style="font-size:0.75em;color:var(--text-secondary);font-weight:400;">' +
-        escapeHtml(String(sub['Timestamp'] || '')) + '</span></div>' +
-        '<div class="entry-answers">' + answersHtml + '</div></div>';
-    }).join('');
-}
-
-function renderLocalSubmissions(list) {
-  var submissions = JSON.parse(localStorage.getItem('superbowl_lx_submissions') || '[]');
-
-  if (submissions.length === 0) {
-    list.innerHTML = '<p style="text-align:center;color:var(--text-secondary);">No submissions yet.</p>';
-    return;
-  }
-
-  list.innerHTML = submissions.map(function(sub) {
-    var answersHtml = Object.keys(sub.answers).map(function(qId) {
-      return '<div class="entry-answer"><strong>Q' + qId + ':</strong> ' + escapeHtml(sub.answers[qId].answer) + '</div>';
-    }).join('');
-
-    var time = new Date(sub.timestamp).toLocaleString();
-
-    return '<div class="submission-entry">' +
-      '<div class="entry-name">\u{1F3C8} ' + escapeHtml(sub.name) +
-      ' <span style="font-size:0.75em;color:var(--text-secondary);font-weight:400;">' + time + '</span></div>' +
-      '<div class="entry-answers">' + answersHtml +
-      '<div class="entry-answer"><strong>Tie-breaker:</strong> Seahawks ' +
-      sub.tiebreaker.seahawks + ' - Patriots ' + sub.tiebreaker.patriots + '</div>' +
-      '</div></div>';
-  }).join('');
-}
-
 function escapeHtml(str) {
-  var div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
+  var d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
 }
 
 function newEntry() {
@@ -1194,42 +744,12 @@ function newEntry() {
   document.querySelectorAll('.option').forEach(function(o) { o.classList.remove('selected'); });
   document.querySelectorAll('.question-card').forEach(function(c) { c.classList.remove('answered'); });
   updateProgress();
-
   document.getElementById('confirmationSection').classList.remove('show');
-  document.getElementById('submissionsPanel').classList.remove('show');
   document.getElementById('formSection').style.display = 'block';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ---- Stars background ----
-function generateStars() {
-  var container = document.getElementById('stars');
-  for (var i = 0; i < 100; i++) {
-    var star = document.createElement('div');
-    star.className = 'star';
-    star.style.left = Math.random() * 100 + '%';
-    star.style.top = Math.random() * 100 + '%';
-    star.style.animationDelay = Math.random() * 3 + 's';
-    star.style.animationDuration = (Math.random() * 2 + 2) + 's';
-    container.appendChild(star);
-  }
-}
-
-// ---- Show setup banner if not configured ----
-function checkConfig() {
-  if (!isConfigured()) {
-    var banner = document.createElement('div');
-    banner.style.cssText = 'background:#f9a825;color:#1a1a2e;text-align:center;padding:10px 16px;font-size:0.85em;font-weight:600;position:fixed;top:0;left:0;right:0;z-index:999;';
-    banner.textContent = 'Google Sheets not connected yet. Submissions will be saved locally only. See GOOGLE_APPS_SCRIPT.js for setup instructions.';
-    document.body.appendChild(banner);
-    document.querySelector('.container').style.paddingTop = '50px';
-  }
-}
-
-// ---- Init ----
-generateStars();
 buildQuestions();
-checkConfig();
 </script>
 
 </body>
