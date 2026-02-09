@@ -126,6 +126,22 @@ function doGet(e) {
     }
     result.answerKey = answerKey;
 
+    // Also return submissions
+    var sheet = ss.getSheetByName('Sheet1') || ss.getSheets()[0];
+    var submissions = [];
+    if (sheet && sheet.getLastRow() > 1) {
+      var data = sheet.getDataRange().getValues();
+      var headers = data[0];
+      for (var j = 1; j < data.length; j++) {
+        var entry = {};
+        for (var k = 0; k < headers.length; k++) {
+          entry[headers[k]] = data[j][k];
+        }
+        submissions.push(entry);
+      }
+    }
+    result.submissions = submissions;
+
     return ContentService
       .createTextOutput(JSON.stringify(result))
       .setMimeType(ContentService.MimeType.JSON);

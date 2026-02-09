@@ -530,6 +530,209 @@
     100% { top: 110vh; opacity: 0; transform: rotateZ(720deg); }
   }
 
+  /* Leaderboard */
+  .leaderboard { display: none; }
+  .leaderboard.show { display: block; }
+
+  .lb-header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .lb-header h2 {
+    font-size: 1.4em;
+    color: var(--navy);
+    font-weight: 800;
+  }
+
+  .lb-header p {
+    color: var(--text-secondary);
+    font-size: 0.85em;
+    margin-top: 4px;
+  }
+
+  .lb-loading {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 40px 0;
+  }
+
+  .lb-podium {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 10px;
+    margin-bottom: 28px;
+    padding: 0 10px;
+  }
+
+  .podium-spot {
+    text-align: center;
+    flex: 1;
+    max-width: 140px;
+  }
+
+  .podium-name {
+    font-weight: 700;
+    font-size: 0.85em;
+    color: var(--navy);
+    margin-bottom: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .podium-bar {
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 6px;
+    min-height: 60px;
+    position: relative;
+  }
+
+  .podium-rank {
+    font-size: 1.6em;
+    font-weight: 800;
+    opacity: 0.9;
+  }
+
+  .podium-score {
+    font-size: 0.75em;
+    font-weight: 700;
+    opacity: 0.8;
+    margin-top: 2px;
+  }
+
+  .podium-1st .podium-bar {
+    background: var(--green);
+    color: white;
+    min-height: 110px;
+  }
+
+  .podium-2nd .podium-bar {
+    background: var(--navy);
+    color: white;
+    min-height: 80px;
+  }
+
+  .podium-3rd .podium-bar {
+    background: var(--grey);
+    color: white;
+    min-height: 60px;
+  }
+
+  .lb-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 4px;
+  }
+
+  .lb-row {
+    background: var(--bg-card);
+    border-radius: 8px;
+  }
+
+  .lb-row td {
+    padding: 12px 14px;
+    font-size: 0.9em;
+  }
+
+  .lb-row td:first-child {
+    border-radius: 8px 0 0 8px;
+    font-weight: 800;
+    color: var(--grey);
+    width: 36px;
+    text-align: center;
+  }
+
+  .lb-row td:nth-child(2) {
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  .lb-row td:last-child {
+    border-radius: 0 8px 8px 0;
+    text-align: right;
+    font-weight: 800;
+    color: var(--green);
+  }
+
+  .lb-row.top3 td:first-child { color: var(--green); }
+
+  .lb-details-toggle {
+    background: none;
+    border: 1.5px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 0.75em;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 8px;
+    transition: all 0.15s;
+  }
+
+  .lb-details-toggle:hover {
+    border-color: var(--navy);
+    color: var(--navy);
+  }
+
+  .lb-detail-row { display: none; }
+  .lb-detail-row.show { display: table-row; }
+
+  .lb-detail-row td {
+    padding: 8px 14px 12px;
+    font-size: 0.8em;
+    color: var(--text-secondary);
+    border-radius: 0 0 8px 8px;
+  }
+
+  .lb-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px 16px;
+  }
+
+  .lb-detail-item {
+    display: flex;
+    gap: 4px;
+  }
+
+  .lb-detail-item .q-num {
+    font-weight: 700;
+    color: var(--navy);
+    flex-shrink: 0;
+  }
+
+  .lb-detail-item.correct { color: var(--green); }
+  .lb-detail-item.wrong { color: #ccc; }
+
+  .lb-back-btn {
+    display: inline-block;
+    background: var(--navy);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    font-size: 0.85em;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-top: 24px;
+  }
+
+  .lb-back-btn:hover { opacity: 0.85; }
+
+  .lb-no-data {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 40px 20px;
+    font-size: 0.95em;
+  }
+
   /* Footer */
   footer {
     text-align: center;
@@ -561,6 +764,9 @@
       <strong>Seattle Seahawks</strong> vs. <strong>New England Patriots</strong>
     </div>
     <div class="date-badge">February 8, 2026</div>
+    <div style="margin-top:14px;">
+      <button onclick="showLeaderboard()" style="background:none;border:1.5px solid var(--green);color:var(--green);padding:7px 18px;border-radius:100px;font-size:0.8em;font-weight:700;cursor:pointer;letter-spacing:0.3px;transition:all 0.15s;" onmouseover="this.style.background='var(--green)';this.style.color='white'" onmouseout="this.style.background='none';this.style.color='var(--green)'">View Leaderboard</button>
+    </div>
   </header>
 
   <div id="adminBanner" class="admin-banner" style="display:none;">
@@ -611,6 +817,20 @@
     <p id="confirmName"></p>
     <p>Good luck &mdash; enjoy the game!</p>
     <button class="new-entry-btn" onclick="newEntry()">Submit Another Entry</button>
+  </div>
+
+  <!-- LEADERBOARD SECTION -->
+  <div class="leaderboard" id="leaderboardSection">
+    <div class="lb-header">
+      <h2>Leaderboard</h2>
+      <p id="lbSubtitle"></p>
+    </div>
+    <div id="lbContent">
+      <div class="lb-loading"><span class="spinner"></span> Loading results...</div>
+    </div>
+    <div style="text-align:center;">
+      <button class="lb-back-btn" onclick="showForm()">Back to Predictions</button>
+    </div>
   </div>
 
   <footer>Super Bowl LX - Fuck the Patriots</footer>
@@ -911,13 +1131,184 @@ function newEntry() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// ---- Leaderboard ----
+var questionLabels = [
+  "Winner","First TD Team","First TD Scorer","Opening Song",
+  "First Commercial","Coin Toss","Anthem Length","Guest Performer",
+  "Gatorade Color","Total FGs","First Penalty","Songs Performed",
+  "MVP","Winning Margin","DtMF Performed"
+];
+
+var questionHeaders = [];
+for (var qi = 1; qi <= 15; qi++) {
+  questionHeaders.push('Q' + qi + ': ' + questionLabels[qi - 1]);
+}
+
+function showLeaderboard() {
+  document.getElementById('formSection').style.display = 'none';
+  document.getElementById('confirmationSection').classList.remove('show');
+  document.getElementById('leaderboardSection').classList.add('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  loadLeaderboard();
+}
+
+function showForm() {
+  document.getElementById('leaderboardSection').classList.remove('show');
+  document.getElementById('formSection').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function loadLeaderboard() {
+  var content = document.getElementById('lbContent');
+  content.innerHTML = '<div class="lb-loading"><span class="spinner"></span> Loading results...</div>';
+
+  try {
+    var resp = await fetch(GOOGLE_SCRIPT_URL);
+    var data = await resp.json();
+
+    if (data.status !== 'success') throw new Error('Bad response');
+
+    var ak = data.answerKey || {};
+    var subs = data.submissions || [];
+    var lockedCount = Object.keys(ak).length;
+
+    document.getElementById('lbSubtitle').textContent = lockedCount + ' of 15 questions answered';
+
+    if (subs.length === 0) {
+      content.innerHTML = '<div class="lb-no-data">No submissions yet.</div>';
+      return;
+    }
+
+    if (lockedCount === 0) {
+      content.innerHTML = '<div class="lb-no-data">No correct answers have been set yet.<br>Check back once the game starts!</div>';
+      return;
+    }
+
+    // Score each submission
+    var scored = subs.map(function(sub) {
+      var name = sub['Name'] || 'Anonymous';
+      var points = 0;
+      var details = [];
+
+      for (var i = 1; i <= 15; i++) {
+        var header = questionHeaders[i - 1];
+        var playerAnswer = sub[header] || '';
+        var isLocked = !!ak[i];
+        var correctText = isLocked ? ak[i].answerText : null;
+        var isCorrect = isLocked && playerAnswer === correctText;
+
+        if (isCorrect) points++;
+
+        details.push({
+          qNum: i,
+          label: questionLabels[i - 1],
+          playerAnswer: playerAnswer,
+          correctAnswer: correctText,
+          isLocked: isLocked,
+          isCorrect: isCorrect
+        });
+      }
+
+      return { name: name, points: points, details: details, total: lockedCount };
+    });
+
+    // Sort by points desc, then by name
+    scored.sort(function(a, b) {
+      if (b.points !== a.points) return b.points - a.points;
+      return a.name.localeCompare(b.name);
+    });
+
+    renderLeaderboard(scored, lockedCount);
+
+  } catch (err) {
+    console.error('Leaderboard error:', err);
+    content.innerHTML = '<div class="lb-no-data">Failed to load results. Try again later.</div>';
+  }
+}
+
+function renderLeaderboard(scored, lockedCount) {
+  var content = document.getElementById('lbContent');
+  var html = '';
+
+  // Podium for top 3
+  if (scored.length >= 1) {
+    var top = scored.slice(0, 3);
+    // Podium order: 2nd, 1st, 3rd
+    var podiumOrder = [];
+    if (top.length >= 2) podiumOrder.push({ data: top[1], cls: 'podium-2nd', rank: '2' });
+    podiumOrder.push({ data: top[0], cls: 'podium-1st', rank: '1' });
+    if (top.length >= 3) podiumOrder.push({ data: top[2], cls: 'podium-3rd', rank: '3' });
+
+    html += '<div class="lb-podium">';
+    podiumOrder.forEach(function(p) {
+      html += '<div class="podium-spot ' + p.cls + '">' +
+        '<div class="podium-name">' + escapeHtml(p.data.name) + '</div>' +
+        '<div class="podium-bar">' +
+          '<div class="podium-rank">' + p.rank + '</div>' +
+          '<div class="podium-score">' + p.data.points + ' / ' + lockedCount + '</div>' +
+        '</div></div>';
+    });
+    html += '</div>';
+  }
+
+  // Full table
+  html += '<table class="lb-table">';
+  scored.forEach(function(entry, idx) {
+    var rank = idx + 1;
+    var rowCls = rank <= 3 ? 'lb-row top3' : 'lb-row';
+    var detailId = 'detail-' + idx;
+
+    html += '<tr class="' + rowCls + '">' +
+      '<td>' + rank + '</td>' +
+      '<td>' + escapeHtml(entry.name) +
+        '<button class="lb-details-toggle" onclick="toggleDetail(\'' + detailId + '\',this)">details</button>' +
+      '</td>' +
+      '<td>' + entry.points + ' / ' + lockedCount + '</td>' +
+    '</tr>';
+
+    // Detail row
+    html += '<tr class="lb-detail-row" id="' + detailId + '"><td colspan="3"><div class="lb-detail-grid">';
+    entry.details.forEach(function(d) {
+      if (!d.isLocked) return;
+      var cls = d.isCorrect ? 'lb-detail-item correct' : 'lb-detail-item wrong';
+      var icon = d.isCorrect ? ' &#10003;' : ' &#10007;';
+      html += '<div class="' + cls + '"><span class="q-num">Q' + d.qNum + '</span> ' +
+        escapeHtml(d.playerAnswer || '(no answer)') + icon + '</div>';
+    });
+    html += '</div></td></tr>';
+  });
+  html += '</table>';
+
+  content.innerHTML = html;
+}
+
+function toggleDetail(id, btn) {
+  var row = document.getElementById(id);
+  if (row) {
+    row.classList.toggle('show');
+    btn.textContent = row.classList.contains('show') ? 'hide' : 'details';
+  }
+}
+
+function escapeHtml(str) {
+  var d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
 // ---- Init ----
+var params = new URLSearchParams(window.location.search);
+
 if (IS_ADMIN) {
   document.getElementById('adminBanner').style.display = 'block';
 }
 
 buildQuestions();
 fetchAnswerKey();
+
+if (params.has('results')) {
+  showLeaderboard();
+}
 </script>
 
 </body>
