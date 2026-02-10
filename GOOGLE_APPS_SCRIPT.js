@@ -12,6 +12,20 @@
 // NOTE: You MUST create a new version for changes to take effect.
 // =============================================================
 
+function getSubmissionsSheet(ss) {
+  // Try common names, then fall back to first sheet that isn't Answer Key
+  var names = ['Sheet1', 'Submissions', 'sheet1'];
+  for (var n = 0; n < names.length; n++) {
+    var s = ss.getSheetByName(names[n]);
+    if (s) return s;
+  }
+  var sheets = ss.getSheets();
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].getName() !== 'Answer Key') return sheets[i];
+  }
+  return sheets[0];
+}
+
 function doPost(e) {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -22,23 +36,32 @@ function doPost(e) {
       var akSheet = ss.getSheetByName('Answer Key');
       if (!akSheet) {
         akSheet = ss.insertSheet('Answer Key');
-        akSheet.appendRow(['Question', 'Answer Index', 'Answer Text', 'Locked At']);
+        akSheet.appendRow(['Question', 'Answer Indices', 'Answer Texts', 'Locked At']);
         akSheet.getRange(1, 1, 1, 4).setFontWeight('bold');
         akSheet.setFrozenRows(1);
       }
 
+      // Check if headers need updating (old format had singular names)
+      var headerRow = akSheet.getRange(1, 1, 1, 4).getValues()[0];
+      if (headerRow[1] === 'Answer Index') {
+        akSheet.getRange(1, 2).setValue('Answer Indices');
+        akSheet.getRange(1, 3).setValue('Answer Texts');
+      }
+
       var qNum = data.question;
-      var ansIdx = data.answerIndex;
-      var ansText = data.answerText;
+      // Support both single and multiple answers
+      var ansIndices = data.answerIndices || [data.answerIndex];
+      var ansTexts = data.answerTexts || [data.answerText];
       var existing = akSheet.getDataRange().getValues();
 
-      // Check if this question already has an answer
+      var indicesStr = ansIndices.join(',');
+      var textsStr = ansTexts.join('||');
+
       var found = false;
       for (var i = 1; i < existing.length; i++) {
         if (existing[i][0] == qNum) {
-          // Update existing row
-          akSheet.getRange(i + 1, 2).setValue(ansIdx);
-          akSheet.getRange(i + 1, 3).setValue(ansText);
+          akSheet.getRange(i + 1, 2).setValue(indicesStr);
+          akSheet.getRange(i + 1, 3).setValue(textsStr);
           akSheet.getRange(i + 1, 4).setValue(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
           found = true;
           break;
@@ -48,8 +71,8 @@ function doPost(e) {
       if (!found) {
         akSheet.appendRow([
           qNum,
-          ansIdx,
-          ansText,
+          indicesStr,
+          textsStr,
           new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })
         ]);
       }
@@ -60,7 +83,7 @@ function doPost(e) {
     }
 
     // ---- Regular Submission POST ----
-    var sheet = ss.getSheetByName('Sheet1') || ss.getSheets()[0];
+    var sheet = getSubmissionsSheet(ss);
 
     if (sheet.getLastRow() === 0) {
       var headers = [
@@ -111,23 +134,30 @@ function doGet(e) {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var result = { status: 'success' };
 
-    // Always return answer key
+    // Return answer key
     var akSheet = ss.getSheetByName('Answer Key');
     var answerKey = {};
     if (akSheet && akSheet.getLastRow() > 1) {
       var akData = akSheet.getDataRange().getValues();
       for (var i = 1; i < akData.length; i++) {
+        var rawIndices = String(akData[i][1]);
+        var rawTexts = String(akData[i][2]);
+
+        // Parse multi-answer format
+        var indices = rawIndices.split(',').map(function(x) { return parseInt(x.trim()); });
+        var texts = rawTexts.split('||');
+
         answerKey[akData[i][0]] = {
-          answerIndex: akData[i][1],
-          answerText: akData[i][2],
+          answerIndices: indices,
+          answerTexts: texts,
           lockedAt: akData[i][3]
         };
       }
     }
     result.answerKey = answerKey;
 
-    // Also return submissions
-    var sheet = ss.getSheetByName('Sheet1') || ss.getSheets()[0];
+    // Return submissions
+    var sheet = getSubmissionsSheet(ss);
     var submissions = [];
     if (sheet && sheet.getLastRow() > 1) {
       var data = sheet.getDataRange().getValues();

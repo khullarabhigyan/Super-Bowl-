@@ -350,6 +350,12 @@
     color: var(--navy);
   }
 
+  .admin-set-btn.toggled {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+  }
+
   /* Tiebreaker */
   .tiebreaker {
     background: var(--bg-card);
@@ -770,7 +776,7 @@
   </header>
 
   <div id="adminBanner" class="admin-banner" style="display:none;">
-    ADMIN MODE &mdash; Click "SET" on the correct answer to lock a question
+    ADMIN MODE &mdash; Toggle correct answers, then click "SAVE" to lock
   </div>
 
   <div id="formSection">
@@ -840,7 +846,8 @@
 var GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzNZzpvYYt-U5oK1UtQiMhKCi0CbYurLDJ5wX02jOTbsU1s4utJiJR6SSjxYZKdOrgCSw/exec';
 
 var IS_ADMIN = new URLSearchParams(window.location.search).has('admin');
-var answerKey = {}; // { questionId: { answerIndex, answerText } }
+var answerKey = {}; // { questionId: { answerIndices: [], answerTexts: [] } }
+var adminSelectedCorrect = {}; // { questionId: { optIdx: true, ... } } for toggling in admin mode
 
 var questions = [
   { id: 1, text: "Who will win Super Bowl LX?", options: ["Seattle Seahawks","New England Patriots","Seahawks by 10+ points","Patriots by 10+ points","Other (overtime/tie scenario)"] },
@@ -881,7 +888,8 @@ async function fetchAnswerKey() {
 function applyLockedQuestions() {
   Object.keys(answerKey).forEach(function(qId) {
     var ak = answerKey[qId];
-    var idx = parseInt(ak.answerIndex);
+    // Support both multi-answer (answerIndices) and legacy single-answer (answerIndex)
+    var indices = ak.answerIndices || [parseInt(ak.answerIndex)];
     var card = document.getElementById('card-' + qId);
     if (!card) return;
 
@@ -901,14 +909,18 @@ function applyLockedQuestions() {
       opt.classList.add('locked-option');
       opt.onclick = null;
 
-      if (optIdx === idx) {
+      if (indices.indexOf(optIdx) !== -1) {
         opt.classList.remove('locked-option');
         opt.classList.add('correct-answer');
       }
     });
 
-    // Auto-set the answer for submission
-    selectedAnswers[parseInt(qId)] = idx;
+    // Hide admin save button for locked questions
+    var saveBtn = document.getElementById('save-btn-' + qId);
+    if (saveBtn) saveBtn.style.display = 'none';
+
+    // Auto-set the first correct answer for submission purposes
+    selectedAnswers[parseInt(qId)] = indices[0];
   });
 
   updateProgress();
@@ -925,7 +937,7 @@ function buildQuestions() {
     var optionsHtml = q.options.map(function(opt, optIdx) {
       var adminBtn = '';
       if (IS_ADMIN) {
-        adminBtn = '<button class="admin-set-btn" onclick="event.stopPropagation();setCorrectAnswer(' + q.id + ',' + optIdx + ')">SET</button>';
+        adminBtn = '<button class="admin-set-btn" id="toggle-' + q.id + '-' + optIdx + '" onclick="event.stopPropagation();toggleCorrectOption(' + q.id + ',' + optIdx + ')">+</button>';
       }
       return '<div class="option" onclick="selectOption(' + q.id + ',' + optIdx + ',this)">' +
         '<div class="option-radio"></div>' +
@@ -933,11 +945,17 @@ function buildQuestions() {
         adminBtn + '</div>';
     }).join('');
 
+    var adminSaveBtn = '';
+    if (IS_ADMIN) {
+      adminSaveBtn = '<div style="text-align:right;margin-top:8px;">' +
+        '<button class="admin-set-btn" id="save-btn-' + q.id + '" style="padding:5px 14px;font-size:0.75em;" onclick="saveCorrectAnswers(' + q.id + ')">SAVE & LOCK</button></div>';
+    }
+
     card.innerHTML =
       '<div class="question-header">' +
         '<div class="question-number">' + q.id + '</div>' +
         '<div class="question-text">' + q.text + '</div>' +
-      '</div><div class="options">' + optionsHtml + '</div>';
+      '</div><div class="options">' + optionsHtml + '</div>' + adminSaveBtn;
 
     container.appendChild(card);
   });
@@ -961,23 +979,56 @@ function updateProgress() {
   document.getElementById('progressText').textContent = n + ' / ' + questions.length;
 }
 
-// ---- Admin: Set correct answer ----
-async function setCorrectAnswer(qId, optIdx) {
+// ---- Admin: Toggle correct option (multi-answer) ----
+function toggleCorrectOption(qId, optIdx) {
   if (!IS_ADMIN) return;
+  if (answerKey[qId]) return; // Already locked
+
+  if (!adminSelectedCorrect[qId]) adminSelectedCorrect[qId] = {};
+
+  if (adminSelectedCorrect[qId][optIdx]) {
+    delete adminSelectedCorrect[qId][optIdx];
+  } else {
+    adminSelectedCorrect[qId][optIdx] = true;
+  }
+
+  // Update toggle button appearance
+  var btn = document.getElementById('toggle-' + qId + '-' + optIdx);
+  var opt = btn ? btn.closest('.option') : null;
+  if (adminSelectedCorrect[qId][optIdx]) {
+    if (btn) { btn.textContent = '\u2713'; btn.style.background = 'var(--green)'; btn.style.borderColor = 'var(--green)'; btn.style.color = 'white'; }
+    if (opt) { opt.style.borderColor = 'var(--green)'; opt.style.background = 'var(--green-bg)'; }
+  } else {
+    if (btn) { btn.textContent = '+'; btn.style.background = 'none'; btn.style.borderColor = 'var(--navy)'; btn.style.color = 'var(--navy)'; }
+    if (opt) { opt.style.borderColor = ''; opt.style.background = ''; }
+  }
+}
+
+// ---- Admin: Save correct answers and lock question ----
+async function saveCorrectAnswers(qId) {
+  if (!IS_ADMIN) return;
+  if (answerKey[qId]) return;
+
+  var selected = adminSelectedCorrect[qId] || {};
+  var indices = Object.keys(selected).map(Number).sort();
+
+  if (indices.length === 0) {
+    showToast('Select at least one correct answer first', 'error');
+    return;
+  }
 
   var q = questions.find(function(x) { return x.id === qId; });
   if (!q) return;
 
-  var ansText = q.options[optIdx];
-  if (!confirm('Lock Q' + qId + ' answer as:\n\n"' + ansText + '"\n\nThis will prevent new submissions for this question.')) {
-    return;
-  }
+  var texts = indices.map(function(i) { return q.options[i]; });
+  var confirmMsg = 'Lock Q' + qId + ' with ' + indices.length + ' correct answer(s):\n\n' + texts.join('\n') + '\n\nThis will prevent new submissions for this question.';
+  if (!confirm(confirmMsg)) return;
 
   var payload = {
     type: 'answer_key',
     question: qId,
-    answerIndex: optIdx,
-    answerText: ansText
+    answerIndices: indices,
+    answerTexts: texts
   };
 
   try {
@@ -989,9 +1040,9 @@ async function setCorrectAnswer(qId, optIdx) {
     });
 
     // Apply locally immediately
-    answerKey[qId] = { answerIndex: optIdx, answerText: ansText };
+    answerKey[qId] = { answerIndices: indices, answerTexts: texts };
     applyLockedQuestions();
-    showToast('Q' + qId + ' locked!', 'success');
+    showToast('Q' + qId + ' locked with ' + indices.length + ' answer(s)!', 'success');
   } catch (err) {
     showToast('Failed to save answer', 'error');
   }
@@ -1184,6 +1235,17 @@ async function loadLeaderboard() {
       return;
     }
 
+    // Filter out Admin submissions
+    subs = subs.filter(function(sub) {
+      var name = (sub['Name'] || '').toString().trim().toLowerCase();
+      return name !== 'admin';
+    });
+
+    if (subs.length === 0) {
+      content.innerHTML = '<div class="lb-no-data">No player submissions yet.</div>';
+      return;
+    }
+
     // Score each submission
     var scored = subs.map(function(sub) {
       var name = sub['Name'] || 'Anonymous';
@@ -1194,8 +1256,9 @@ async function loadLeaderboard() {
         var header = questionHeaders[i - 1];
         var playerAnswer = sub[header] || '';
         var isLocked = !!ak[i];
-        var correctText = isLocked ? ak[i].answerText : null;
-        var isCorrect = isLocked && playerAnswer === correctText;
+        // Support multi-answer: answerTexts array, fallback to single answerText
+        var correctTexts = isLocked ? (ak[i].answerTexts || [ak[i].answerText]) : [];
+        var isCorrect = isLocked && correctTexts.indexOf(playerAnswer) !== -1;
 
         if (isCorrect) points++;
 
@@ -1203,7 +1266,7 @@ async function loadLeaderboard() {
           qNum: i,
           label: questionLabels[i - 1],
           playerAnswer: playerAnswer,
-          correctAnswer: correctText,
+          correctAnswer: correctTexts.join(' / '),
           isLocked: isLocked,
           isCorrect: isCorrect
         });
